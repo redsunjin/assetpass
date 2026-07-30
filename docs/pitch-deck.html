@@ -23,6 +23,7 @@
       .card p { font-size: 1rem; margin: 0; } .big { font-size: 2.25rem; font-weight: 800; color: #8cd4ff; letter-spacing: -.04em; margin-bottom: 10px; }
       ol { padding-left: 1.2em; max-width: 900px; font-size: clamp(1.1rem, 2.1vw, 1.55rem); line-height: 1.7; color: #d1e0f0; } li + li { margin-top: 12px; }
       .pill { display: inline-block; margin-top: 15px; padding: 9px 13px; border: 1px solid #3b739e; border-radius: 999px; color: #99ddff; font-size: .92rem; }
+      .workflow-frame { width: 100%; height: 510px; margin-top: 8px; border: 1px solid #315b80; border-radius: 18px; background: #0b1828; }
       footer { position: absolute; bottom: 24px; color: #8196ad; font-size: .82rem; } a { color: #8bd5ff; }
       @media (max-width: 700px) { .grid, .grid.two { grid-template-columns: 1fr; } .slide { padding-top: 72px; padding-bottom: 72px; } .card { min-height: auto; } }
     </style>
@@ -66,13 +67,8 @@
     <section class="slide">
       <div class="wrap">
         <div class="num">Product flow</div>
-        <h2>등록 → 검토 → 공시 → 검증</h2>
-        <ol>
-          <li>발행자가 문서 원본의 해시와 자산 정보를 등록합니다.</li>
-          <li>검토자가 지갑 서명으로 최신 문서를 승인 또는 반려합니다.</li>
-          <li>발행자가 승인된 문서를 공시 상태로 전환합니다.</li>
-          <li>누구나 최신 상태와 온체인 이력을 검증합니다.</li>
-        </ol>
+        <h2>문서 → 검토 → 공시 → 검증</h2>
+        <iframe class="workflow-frame" src="asset-passport-workflow.html" title="Asset Passport 작동 순서도" loading="lazy"></iframe>
       </div>
       <footer>04 / 08</footer>
     </section>
