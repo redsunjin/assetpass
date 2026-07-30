@@ -1,0 +1,53 @@
+[
+  {
+    "id": "demo-solar-001",
+    "name": "Demo Solar Revenue Right A",
+    "type": "fictional-revenue-right",
+    "status": "review",
+    "issuer": "Demo Renewables Lab",
+    "description": "태양광 운영 데이터와 연결된 가상 증빙 시나리오입니다. 실제 권리·수익·계약을 나타내지 않습니다.",
+    "disclosureDueAt": "2026-08-05T09:00:00+09:00",
+    "documents": [
+      {
+        "version": 1,
+        "type": "Disclosure package",
+        "sha256": "af5aba5c9f5e365d508f8f4a7d8139896a3c50dd21ef0307ead61d2547464ce6",
+        "status": "pending-review",
+        "submittedAt": "2026-07-28T10:00:00+09:00"
+      }
+    ],
+    "notice": "데모용 가상 자산이며 투자상품이나 실제 권리를 나타내지 않습니다."
+  },
+  {
+    "id": "demo-invoice-002",
+    "name": "Demo Invoice Claim B",
+    "type": "fictional-receivable",
+    "status": "draft",
+    "issuer": "Demo Supply Operations",
+    "description": "가상 매출채권 문서 관리 흐름을 보여 주는 샘플입니다.",
+    "disclosureDueAt": "2026-08-12T09:00:00+09:00",
+    "documents": [],
+    "notice": "데모용 가상 자산이며 투자상품이나 실제 권리를 나타내지 않습니다."
+  },
+  {
+    "id": "demo-building-003",
+    "name": "Demo Building Income Right C",
+    "type": "fictional-income-right",
+    "status": "disclosed",
+    "issuer": "Demo Property Records",
+    "description": "가상 부동산 운영 문서의 공시 완료 상태를 검증하는 샘플입니다.",
+    "disclosureDueAt": "2026-07-30T09:00:00+09:00",
+    "documents": [
+      {
+        "version": 1,
+        "type": "Disclosure package",
+        "sha256": "8030f3c7878d2e8507104989348b8228a2ed3b45a3ee1607730e0573258f772b",
+        "status": "approved",
+        "submittedAt": "2026-07-20T10:00:00+09:00",
+        "reviewedAt": "2026-07-21T11:30:00+09:00",
+        "reviewer": "0x1002…0000"
+      }
+    ],
+    "notice": "데모용 가상 자산이며 투자상품이나 실제 권리를 나타내지 않습니다."
+  }
+]
