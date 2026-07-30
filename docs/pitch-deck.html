@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Asset Passport pitch deck — AssetPass for GIWA GASOK." />
+    <title>Asset Passport — Pitch Deck</title>
+    <style>
+      :root { font-family: Inter, Pretendard, ui-sans-serif, system-ui, -apple-system, sans-serif; color: #edf5ff; background: #07101d; }
+      * { box-sizing: border-box; } body { margin: 0; background: #07101d; }
+      .slide { min-height: 100svh; padding: 8vh max(7vw, 24px); display: grid; align-content: center; position: relative; overflow: hidden; border-bottom: 1px solid #203a57; }
+      .slide:before { content: ''; position: absolute; width: 62vw; height: 62vw; border-radius: 50%; background: radial-gradient(circle, rgba(35,151,255,.22), transparent 67%); top: -34vw; right: -21vw; pointer-events: none; }
+      .slide:nth-child(even) { background: #0b1828; } .slide:nth-child(even):before { background: radial-gradient(circle, rgba(42,218,177,.17), transparent 67%); left: -25vw; top: auto; bottom: -37vw; }
+      .wrap { max-width: 1120px; width: 100%; margin: 0 auto; position: relative; }
+      .num { color: #83cbff; font-weight: 750; letter-spacing: .14em; font-size: .82rem; text-transform: uppercase; }
+      h1 { max-width: 900px; margin: 14px 0 20px; font-size: clamp(3.1rem, 8vw, 7.5rem); letter-spacing: -.07em; line-height: .93; }
+      h2 { max-width: 950px; margin: 16px 0 28px; font-size: clamp(2.1rem, 5.7vw, 5.2rem); line-height: 1.03; letter-spacing: -.055em; }
+      h3 { margin: 0 0 9px; font-size: 1.15rem; color: #b9e3ff; } p { max-width: 800px; font-size: clamp(1.05rem, 1.8vw, 1.42rem); line-height: 1.65; color: #c7d7e9; }
+      .accent { color: #73c6ff; } .sub { color: #9bb1ca; font-size: 1rem; letter-spacing: .02em; }
+      .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 34px; }
+      .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); } .card { padding: 25px; min-height: 175px; border: 1px solid #2b5073; border-radius: 20px; background: rgba(12, 34, 58, .78); }
+      .card p { font-size: 1rem; margin: 0; } .big { font-size: 2.25rem; font-weight: 800; color: #8cd4ff; letter-spacing: -.04em; margin-bottom: 10px; }
+      ol { padding-left: 1.2em; max-width: 900px; font-size: clamp(1.1rem, 2.1vw, 1.55rem); line-height: 1.7; color: #d1e0f0; } li + li { margin-top: 12px; }
+      .pill { display: inline-block; margin-top: 15px; padding: 9px 13px; border: 1px solid #3b739e; border-radius: 999px; color: #99ddff; font-size: .92rem; }
+      footer { position: absolute; bottom: 24px; color: #8196ad; font-size: .82rem; } a { color: #8bd5ff; }
+      @media (max-width: 700px) { .grid, .grid.two { grid-template-columns: 1fr; } .slide { padding-top: 72px; padding-bottom: 72px; } .card { min-height: auto; } }
+    </style>
+  </head>
+  <body>
+    <section class="slide">
+      <div class="wrap">
+        <div class="num">GIWA GASOK · Track 01 DeFi / RWA</div>
+        <h1>Asset<br><span class="accent">Passport</span></h1>
+        <p>GIWA 위에서 토큰화 자산의 최신 문서·검토·공시 이력을 검증하는 RWA 운영 증빙 서비스</p>
+        <span class="pill">by AssetPass</span>
+      </div>
+      <footer>01 / 08</footer>
+    </section>
+
+    <section class="slide">
+      <div class="wrap">
+        <div class="num">Problem</div>
+        <h2>토큰은 있어도,<br>운영의 <span class="accent">신뢰 기록</span>은 흩어져 있습니다.</h2>
+        <div class="grid">
+          <div class="card"><div class="big">문서</div><p>어떤 문서가 최신본인지, 원본이 바뀌지 않았는지 확인이 어렵습니다.</p></div>
+          <div class="card"><div class="big">승인</div><p>누가 어떤 근거로 검토·승인했는지 책임 이력이 분산됩니다.</p></div>
+          <div class="card"><div class="big">공시</div><p>현재 자산의 공개·보류 상태와 예정 일정을 일관되게 보기 어렵습니다.</p></div>
+        </div>
+      </div>
+      <footer>02 / 08</footer>
+    </section>
+
+    <section class="slide">
+      <div class="wrap">
+        <div class="num">Solution</div>
+        <h2>원본 문서는 밖에 두고,<br><span class="accent">증명 가능한 이력</span>만 GIWA에 남깁니다.</h2>
+        <div class="grid two">
+          <div class="card"><h3>On-chain evidence</h3><p>자산 ID, 문서 해시·버전, 역할별 검토 승인, 상태 변경, 공시 일정만 기록합니다.</p></div>
+          <div class="card"><h3>Public verification</h3><p>발행자·검토자·감사자·보유자가 지갑 기반으로 최신 운영 상태를 확인합니다.</p></div>
+        </div>
+      </div>
+      <footer>03 / 08</footer>
+    </section>
+
+    <section class="slide">
+      <div class="wrap">
+        <div class="num">Product flow</div>
+        <h2>등록 → 검토 → 공시 → 검증</h2>
+        <ol>
+          <li>발행자가 문서 원본의 해시와 자산 정보를 등록합니다.</li>
+          <li>검토자가 지갑 서명으로 최신 문서를 승인 또는 반려합니다.</li>
+          <li>발행자가 승인된 문서를 공시 상태로 전환합니다.</li>
+          <li>누구나 최신 상태와 온체인 이력을 검증합니다.</li>
+        </ol>
+      </div>
+      <footer>04 / 08</footer>
+    </section>
+
+    <section class="slide">
+      <div class="wrap">
+        <div class="num">Why GIWA</div>
+        <h2>RWA 운영 증빙에 맞는<br><span class="accent">빠르고 EVM 호환적인</span> 실행 환경</h2>
+        <div class="grid">
+          <div class="card"><h3>Low-friction records</h3><p>자주 갱신되는 문서·상태 이력을 부담 없이 기록하는 데 초점을 둡니다.</p></div>
+          <div class="card"><h3>Wallet-native proof</h3><p>표준 EVM 지갑으로 역할별 검토와 공개 검증 경험을 구현합니다.</p></div>
+          <div class="card"><h3>GIWA-native value</h3><p>GIWA Sepolia에서 실제 온체인 흐름을 검증하고 생태계의 RWA 신뢰 레이어로 확장합니다.</p></div>
+        </div>
+      </div>
+      <footer>05 / 08</footer>
+    </section>
+
+    <section class="slide">
+      <div class="wrap">
+        <div class="num">MVP</div>
+        <h2>테스트넷 데모를 위한<br><span class="accent">핵심 제품 범위</span>를 구현했습니다.</h2>
+        <div class="grid two">
+          <div class="card"><h3>Implemented</h3><p>AssetRegistry 컨트랙트, 역할별 승인과 상태 이력 테스트, 자산 목록·상세 화면, 문서 해시·공시 일정 UI, EVM 지갑 연결·서명 미리보기.</p></div>
+          <div class="card"><h3>Testnet demo</h3><p>가상 자산 3건을 GIWA Sepolia에 등록하고, 검토·공시 트랜잭션과 탐색기 검증을 연결하는 단계입니다.</p></div>
+        </div>
+      </div>
+      <footer>06 / 08</footer>
+    </section>
+
+    <section class="slide">
+      <div class="wrap">
+        <div class="num">Roadmap</div>
+        <h2>테스트넷 검증에서<br>실제 운영 <span class="accent">파일럿</span>으로</h2>
+        <div class="grid">
+          <div class="card"><h3>Now</h3><p>GIWA Sepolia에서 등록·검토·공시·검증 흐름을 시연합니다.</p></div>
+          <div class="card"><h3>Next</h3><p>RWA 발행·운용 사업자와 문서 증빙 및 공시 운영 파일럿을 설계합니다.</p></div>
+          <div class="card"><h3>Later</h3><p>역할 정책, 알림, 감사 리포트, GIWA Wallet 연동 후보로 확장합니다.</p></div>
+        </div>
+      </div>
+      <footer>07 / 08</footer>
+    </section>
+
+    <section class="slide">
+      <div class="wrap">
+        <div class="num">Vision</div>
+        <h2>RWA의 신뢰는<br><span class="accent">발행 이후의 운영</span>에서 시작됩니다.</h2>
+        <p>AssetPass는 자산을 사고팔거나 보관하지 않습니다. 자산을 둘러싼 문서·검토·공시의 최신 상태를 누구나 확인할 수 있게 만드는 신뢰 운영 인프라를 만듭니다.</p>
+        <span class="pill">Asset Passport · GIWA GASOK 2026</span>
+      </div>
+      <footer>08 / 08 · <a href="https://github.com/redsunjin/assetpass">github.com/redsunjin/assetpass</a></footer>
+    </section>
+  </body>
+</html>
