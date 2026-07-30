@@ -2,51 +2,82 @@
   {
     "id": "demo-solar-001",
     "name": "Demo Solar Revenue Right A",
-    "type": "fictional-revenue-right",
+    "type": "가상 수익권 증빙",
     "status": "review",
     "issuer": "Demo Renewables Lab",
-    "description": "태양광 운영 데이터와 연결된 가상 증빙 시나리오입니다. 실제 권리·수익·계약을 나타내지 않습니다.",
-    "disclosureDueAt": "2026-08-05T09:00:00+09:00",
+    "description": "문서를 등록한 뒤 검토가 끝나기 전에는 공시로 전환할 수 없음을 보여 주는 가상 시나리오입니다.",
+    "scenario": "시나리오 1 · 승인 전 공시 차단",
+    "question": "검토가 끝나기 전에 발행자가 임의로 공시할 수 있을까?",
+    "answer": "아니요. 컨트랙트는 최신 문서가 승인 상태여야만 공시 전환을 허용합니다.",
+    "verification": "배포 후 공시 전환을 먼저 시도해 실패를 확인하고, 검토 승인 뒤 같은 자산을 공시로 전환합니다.",
+    "disclosurePlan": "배포 시점부터 14일 뒤로 기록",
     "documents": [
       {
         "version": 1,
-        "type": "Disclosure package",
+        "type": "공시 패키지",
         "sha256": "af5aba5c9f5e365d508f8f4a7d8139896a3c50dd21ef0307ead61d2547464ce6",
         "status": "pending-review",
-        "submittedAt": "2026-07-28T10:00:00+09:00"
+        "submittedAt": "배포 후 첫 번째 기록",
+        "reviewedAt": null,
+        "reviewer": null
       }
+    ],
+    "timeline": [
+      { "step": "자산 등록", "actor": "발행자", "detail": "외부 식별자와 공시 기준 시점만 기록" },
+      { "step": "문서 해시 등록", "actor": "발행자", "detail": "원본 파일 대신 SHA-256 해시와 버전 기록" },
+      { "step": "검토 승인", "actor": "검토자", "detail": "승인 전에는 공시 전환이 실패해야 함" },
+      { "step": "공시 전환", "actor": "발행자", "detail": "승인 이후에만 상태 변경 가능" }
     ],
     "notice": "데모용 가상 자산이며 투자상품이나 실제 권리를 나타내지 않습니다."
   },
   {
     "id": "demo-invoice-002",
     "name": "Demo Invoice Claim B",
-    "type": "fictional-receivable",
+    "type": "가상 매출채권 증빙",
     "status": "draft",
     "issuer": "Demo Supply Operations",
-    "description": "가상 매출채권 문서 관리 흐름을 보여 주는 샘플입니다.",
-    "disclosureDueAt": "2026-08-12T09:00:00+09:00",
+    "description": "문서가 아직 제출되지 않은 자산은 검토나 공시의 대상이 될 수 없다는 출발 상태를 보여 줍니다.",
+    "scenario": "시나리오 2 · 문서 없는 자산은 초안에 머무름",
+    "question": "식별자만 등록한 자산을 검토 완료나 공시 완료로 표시할 수 있을까?",
+    "answer": "아니요. 문서 해시가 등록되지 않으면 검토 흐름 자체가 시작되지 않습니다.",
+    "verification": "문서가 없는 상태의 자산 조회 결과와, 문서 등록 전 공시 전환이 막히는 결과를 함께 확인합니다.",
+    "disclosurePlan": "배포 시점부터 21일 뒤로 기록",
     "documents": [],
+    "timeline": [
+      { "step": "자산 등록", "actor": "발행자", "detail": "초안 상태에서 시작" },
+      { "step": "문서 미제출", "actor": "시스템", "detail": "최신 문서 버전 0, 검토 이력 없음" },
+      { "step": "공시 차단", "actor": "컨트랙트", "detail": "승인된 최신 문서가 없어 상태 변경 불가" }
+    ],
     "notice": "데모용 가상 자산이며 투자상품이나 실제 권리를 나타내지 않습니다."
   },
   {
     "id": "demo-building-003",
     "name": "Demo Building Income Right C",
-    "type": "fictional-income-right",
-    "status": "disclosed",
+    "type": "가상 부동산 운영 증빙",
+    "status": "review",
     "issuer": "Demo Property Records",
-    "description": "가상 부동산 운영 문서의 공시 완료 상태를 검증하는 샘플입니다.",
-    "disclosureDueAt": "2026-07-30T09:00:00+09:00",
+    "description": "원본 문서를 공개하지 않고도 같은 문서인지와 검토 이력이 맞는지 확인하는 가상 시나리오입니다.",
+    "scenario": "시나리오 3 · 원본 없이 해시와 이력 검증",
+    "question": "원본 문서를 체인에 올리지 않고도 증빙을 확인할 수 있을까?",
+    "answer": "가능합니다. 같은 원본에서 계산한 SHA-256 값과 체인에 남은 해시를 비교합니다.",
+    "verification": "배포 후 문서 해시·버전·검토 이벤트를 탐색기에서 확인하고, 다른 파일의 해시가 일치하지 않음도 확인합니다.",
+    "disclosurePlan": "배포 시점부터 28일 뒤로 기록",
     "documents": [
       {
         "version": 1,
-        "type": "Disclosure package",
+        "type": "공시 패키지",
         "sha256": "8030f3c7878d2e8507104989348b8228a2ed3b45a3ee1607730e0573258f772b",
-        "status": "approved",
-        "submittedAt": "2026-07-20T10:00:00+09:00",
-        "reviewedAt": "2026-07-21T11:30:00+09:00",
-        "reviewer": "0x1002…0000"
+        "status": "pending-review",
+        "submittedAt": "배포 후 두 번째 문서 기록",
+        "reviewedAt": null,
+        "reviewer": null
       }
+    ],
+    "timeline": [
+      { "step": "자산 등록", "actor": "발행자", "detail": "원본 문서나 개인정보는 기록하지 않음" },
+      { "step": "문서 해시 등록", "actor": "발행자", "detail": "같은 파일이면 같은 해시, 다른 파일이면 다른 해시" },
+      { "step": "검토 이력", "actor": "검토자", "detail": "검토 결과와 증빙 해시를 이벤트로 확인" },
+      { "step": "감사 확인", "actor": "감사자", "detail": "필요하면 별도 증빙 해시를 추가로 남김" }
     ],
     "notice": "데모용 가상 자산이며 투자상품이나 실제 권리를 나타내지 않습니다."
   }
