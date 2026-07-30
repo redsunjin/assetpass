@@ -14,7 +14,7 @@
       .wrap { max-width: 1120px; width: 100%; margin: 0 auto; position: relative; }
       .num { color: #83cbff; font-weight: 750; letter-spacing: .14em; font-size: .82rem; text-transform: uppercase; }
       h1 { max-width: 900px; margin: 14px 0 20px; font-size: clamp(3.1rem, 8vw, 7.5rem); letter-spacing: -.07em; line-height: .93; }
-      h2 { max-width: 950px; margin: 16px 0 28px; font-size: clamp(2.1rem, 5.7vw, 5.2rem); line-height: 1.03; letter-spacing: -.055em; }
+      h2 { max-width: 950px; margin: 16px 0 28px; font-size: clamp(2.1rem, 5.7vw, 5.2rem); line-height: 1.03; letter-spacing: -.055em; word-break: keep-all; overflow-wrap: break-word; }
       h3 { margin: 0 0 9px; font-size: 1.15rem; color: #b9e3ff; } p { max-width: 800px; font-size: clamp(1.05rem, 1.8vw, 1.42rem); line-height: 1.65; color: #c7d7e9; }
       .accent { color: #73c6ff; } .sub { color: #9bb1ca; font-size: 1rem; letter-spacing: .02em; }
       .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 34px; }
@@ -53,7 +53,7 @@
     <section class="slide">
       <div class="wrap">
         <div class="num">Solution</div>
-        <h2>원본 문서는 밖에 두고,<br><span class="accent">증명 가능한 이력</span>만 GIWA에 남깁니다.</h2>
+        <h2>원본 문서는 밖에 두고,<br><span class="accent">증명 가능한 이력만</span><br>GIWA에 남깁니다.</h2>
         <div class="grid two">
           <div class="card"><h3>On-chain evidence</h3><p>자산 ID, 문서 해시·버전, 역할별 검토 승인, 상태 변경, 공시 일정만 기록합니다.</p></div>
           <div class="card"><h3>Public verification</h3><p>발행자·검토자·감사자·보유자가 지갑 기반으로 최신 운영 상태를 확인합니다.</p></div>
