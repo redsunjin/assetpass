@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Asset Passport 작동 흐름",
+    "subtitle": "원본 문서는 밖에 두고, 검증 가능한 운영 이력만 GIWA에 기록합니다.",
+    "output": "docs/asset-passport-workflow.html",
+    "viewBox": [720, 720]
+  },
+  "lanes": [
+    { "id": "issuer", "label": "발행자 / 운영자" },
+    { "id": "passport", "label": "Asset Passport" },
+    { "id": "giwa", "label": "GIWA Sepolia" },
+    { "id": "review", "label": "검토자 / 보유자" }
+  ],
+  "phases": [
+    { "id": "prepare", "label": "문서 준비", "fromCol": 0, "toCol": 0 },
+    { "id": "evidence", "label": "증빙 기록", "fromCol": 1, "toCol": 2, "variant": "emphasis" },
+    { "id": "review", "label": "검토 · 공시 · 검증", "fromCol": 3, "toCol": 5, "variant": "dashed" }
+  ],
+  "mainPath": ["document", "hash", "record", "review", "disclose", "verify"],
+  "nodes": [
+    { "id": "document", "lane": "issuer", "col": 0, "type": "external", "label": "문서 준비", "sublabel": "원본은 오프체인" },
+    { "id": "hash", "lane": "passport", "col": 1, "type": "backend", "label": "해시 생성", "sublabel": "문서 버전" },
+    { "id": "record", "lane": "giwa", "col": 2, "type": "database", "label": "증빙 기록", "sublabel": "해시 · 상태 · 이력", "tag": "on-chain" },
+    { "id": "review", "lane": "review", "col": 3, "type": "security", "label": "지갑 검토", "sublabel": "승인 또는 반려" },
+    { "id": "disclose", "lane": "issuer", "col": 4, "type": "frontend", "label": "공시 전환", "sublabel": "최신 상태 반영" },
+    { "id": "verify", "lane": "review", "col": 5, "type": "cloud", "label": "공개 검증", "sublabel": "최신 이력 확인" }
+  ],
+  "edges": [
+    { "from": "document", "to": "hash", "label": "해시만 전달", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "drop", "labelSegment": 1 },
+    { "from": "hash", "to": "record", "label": "증빙 등록", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "drop", "labelSegment": 1 },
+    { "from": "record", "to": "review", "label": "검토 요청", "variant": "default", "fromSide": "bottom", "toSide": "top", "route": "drop", "labelSegment": 1, "labelDy": 11 },
+    { "from": "review", "to": "disclose", "label": "승인", "variant": "emphasis", "fromSide": "top", "toSide": "bottom", "route": "up-channel", "labelSegment": 1 },
+    { "from": "disclose", "to": "verify", "label": "공개 상태", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "drop", "labelSegment": 1 }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "기록하는 것",
+      "items": ["문서 해시와 버전", "검토 승인과 상태 이력", "공시 일정"]
+    },
+    {
+      "dot": "amber",
+      "title": "기록하지 않는 것",
+      "items": ["원본 문서", "실제 자산의 보관 정보", "투자자 개인정보"]
+    }
+  ]
+}
