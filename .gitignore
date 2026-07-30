@@ -9,4 +9,5 @@ coverage/
 artifacts/
 cache/
 out/
+_workspace/
 *.log
