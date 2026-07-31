@@ -1,5 +1,9 @@
 const config = window.ASSET_PASSPORT_CONFIG;
-const state = { assets: [], selectedId: null, account: null, workflowStep: 0, ai: { provider: "rules", endpoint: "http://127.0.0.1:11434", model: "" } };
+const defaultAiSuppliers = [
+  { id: "rules", name: "내장 증빙 규칙", kind: "rules", endpoint: "", model: "", status: "ready" },
+  { id: "ollama-local", name: "내 컴퓨터의 Ollama", kind: "ollama", endpoint: "http://127.0.0.1:11434", model: "", status: "unverified" },
+];
+const state = { assets: [], selectedId: null, account: null, workflowStep: 0, ai: { activeId: "rules", suppliers: structuredClone(defaultAiSuppliers) } };
 const labels = { draft: "초안", review: "검토 대기", approved: "승인", disclosed: "공개 가능", suspended: "중지", archived: "종료" };
 const workflowStages = [
   { actor: "Issuer", title: "자료 등록: 원본은 밖에, 증빙값만 연결", description: "발행자는 원본 문서를 오프체인에 보관하고 문서 해시·버전·기준일을 등록합니다. 이 입력이 이후 모든 판단의 기준이 됩니다.", input: "문서 메타데이터 · 해시 · 버전", output: "점검할 공개 준비 자료", next: "AI 사전 점검", target: "#asset-list", openLabel: "등록 자료 보기" },
@@ -168,84 +172,155 @@ async function signReview(asset) {
   } catch (error) { document.querySelector("#signature-result").textContent = "서명이 취소되었거나 실패했습니다."; console.error(error); }
 }
 
-function loadAiSettings() {
-  try {
-    const saved = JSON.parse(localStorage.getItem("asset-passport-ai-settings") || "{}");
-    state.ai = { ...state.ai, ...saved };
-  } catch (error) { console.warn("Could not load local AI settings", error); }
-  document.querySelector("#ai-provider").value = state.ai.provider;
-  document.querySelector("#ai-endpoint").value = state.ai.endpoint;
-  document.querySelector("#ai-model").value = state.ai.model;
+function activeAiSupplier() { return state.ai.suppliers.find(({ id }) => id === state.ai.activeId) || state.ai.suppliers[0]; }
+function supplierKindLabel(kind) { return ({ rules: "내장 규칙", ollama: "로컬 Ollama", relay: "HTTPS 보안 릴레이" })[kind] || kind; }
+function persistAiSettings() { localStorage.setItem("asset-passport-ai-settings", JSON.stringify(state.ai)); }
+
+function renderAiSupplierOptions() {
+  const select = document.querySelector("#ai-provider");
+  select.replaceChildren(...state.ai.suppliers.map((supplier) => {
+    const option = document.createElement("option");
+    option.value = supplier.id;
+    option.textContent = `${supplier.name} · ${supplierKindLabel(supplier.kind)}`;
+    return option;
+  }));
+  select.value = state.ai.activeId;
+}
+
+function renderAiSupplierList() {
+  const list = document.querySelector("#ai-supplier-list");
+  list.replaceChildren(...state.ai.suppliers.map((supplier) => {
+    const item = document.createElement("div");
+    const active = supplier.id === state.ai.activeId;
+    item.className = `ai-supplier-item ${active ? "active" : ""}`;
+    item.innerHTML = `<div><strong>${escapeHtml(supplier.name)}</strong><small>${escapeHtml(supplierKindLabel(supplier.kind))} · ${supplier.status === "ready" ? "연결 확인" : supplier.status === "failed" ? "연결 실패" : supplier.kind === "rules" ? "사용 가능" : "연결 확인 전"}</small></div><button class="secondary-button" type="button">${active ? "사용 중" : "사용"}</button>`;
+    item.querySelector("button").disabled = active;
+    item.querySelector("button").addEventListener("click", () => selectAiSupplier(supplier.id));
+    return item;
+  }));
+}
+
+function syncActiveAiInputs() {
+  const supplier = activeAiSupplier();
+  document.querySelector("#ai-provider").value = supplier.id;
+  const endpoint = document.querySelector("#ai-endpoint");
+  const model = document.querySelector("#ai-model");
+  endpoint.value = supplier.endpoint || "";
+  model.value = supplier.model || "";
+  endpoint.disabled = supplier.kind === "rules";
+  model.disabled = supplier.kind === "rules";
+}
+
+function selectAiSupplier(id) {
+  state.ai.activeId = id;
+  persistAiSettings();
+  syncActiveAiInputs();
   updateAiManager();
 }
 
+function loadAiSettings() {
+  try {
+    const saved = JSON.parse(localStorage.getItem("asset-passport-ai-settings") || "{}");
+    if (Array.isArray(saved.suppliers) && saved.suppliers.length) {
+      state.ai = { activeId: saved.activeId, suppliers: saved.suppliers };
+    } else if (saved.provider === "ollama") {
+      const supplier = state.ai.suppliers.find(({ id }) => id === "ollama-local");
+      supplier.endpoint = saved.endpoint || supplier.endpoint;
+      supplier.model = saved.model || "";
+      state.ai.activeId = supplier.id;
+    }
+  } catch (error) { console.warn("Could not load local AI settings", error); }
+  if (!state.ai.suppliers.some(({ id }) => id === state.ai.activeId)) state.ai.activeId = state.ai.suppliers[0].id;
+  renderAiSupplierOptions(); syncActiveAiInputs(); updateAiManager();
+}
+
 function updateAiManager(message) {
-  state.ai.provider = document.querySelector("#ai-provider").value;
-  const endpointInput = document.querySelector("#ai-endpoint");
-  const modelInput = document.querySelector("#ai-model");
-  const local = state.ai.provider === "ollama";
-  endpointInput.disabled = !local;
-  modelInput.disabled = !local;
+  const supplier = activeAiSupplier();
   const stateEl = document.querySelector("#ai-state");
-  stateEl.textContent = local ? "로컬 LLM" : "규칙 엔진";
-  stateEl.className = `control-state ${local ? "local" : ""}`;
-  document.querySelector("#ai-supplier").textContent = local ? "Ollama · 이 기기에서 실행" : "내장 증빙 규칙 · LLM 미사용";
-  document.querySelector("#ai-data-scope").textContent = local ? "문서 메타데이터·버전·승인 상태만" : "문서 메타데이터·버전·승인 상태";
-  document.querySelector("#ai-route").textContent = local ? "브라우저 → localhost Ollama" : "브라우저 내부 · 네트워크 전송 없음";
+  stateEl.textContent = supplier.kind === "rules" ? "규칙 엔진" : supplier.kind === "ollama" ? "로컬 LLM" : "보안 릴레이";
+  stateEl.className = `control-state ${supplier.kind === "rules" ? "" : "local"}`;
+  document.querySelector("#ai-supplier").textContent = supplier.kind === "rules" ? "내장 증빙 규칙 · LLM 미사용" : `${supplier.name} · ${supplierKindLabel(supplier.kind)}`;
+  document.querySelector("#ai-data-scope").textContent = supplier.kind === "rules" ? "문서 메타데이터·버전·승인 상태" : "문서 메타데이터·버전·승인 상태만";
+  document.querySelector("#ai-route").textContent = supplier.kind === "rules" ? "브라우저 내부 · 네트워크 전송 없음" : supplier.kind === "ollama" ? "브라우저 → localhost Ollama" : "브라우저 → HTTPS 보안 릴레이";
+  renderAiSupplierList();
   if (message) document.querySelector("#ai-run-result").textContent = message;
 }
 
-function saveAiSettings() {
-  state.ai = {
-    provider: document.querySelector("#ai-provider").value,
-    endpoint: document.querySelector("#ai-endpoint").value.trim(),
-    model: document.querySelector("#ai-model").value.trim(),
-  };
-  localStorage.setItem("asset-passport-ai-settings", JSON.stringify(state.ai));
-  updateAiManager("설정을 이 브라우저에 저장했습니다. API 키·원본 문서는 저장하지 않습니다.");
+function validateAiSupplier(supplier) {
+  if (supplier.kind === "rules") return;
+  if (!supplier.endpoint) throw new Error("연결 주소를 입력하세요.");
+  const url = new URL(supplier.endpoint);
+  if (supplier.kind === "ollama" && !["localhost", "127.0.0.1", "::1"].includes(url.hostname)) throw new Error("로컬 Ollama는 localhost 주소만 허용합니다.");
+  if (supplier.kind === "relay" && url.protocol !== "https:") throw new Error("외부 AI 보안 릴레이는 HTTPS 주소만 허용합니다.");
 }
 
-function localOllamaUrl(path) {
-  const endpoint = document.querySelector("#ai-endpoint").value.trim().replace(/\/$/, "");
-  const url = new URL(endpoint);
-  if (!["localhost", "127.0.0.1", "::1"].includes(url.hostname)) throw new Error("보안을 위해 로컬호스트 Ollama 주소만 허용합니다.");
-  return `${endpoint}${path}`;
+function supplierUrl(supplier, path) {
+  validateAiSupplier(supplier);
+  const base = supplier.endpoint.endsWith("/") ? supplier.endpoint : `${supplier.endpoint}/`;
+  return new URL(path.replace(/^\//, ""), base).toString();
+}
+
+function saveAiSettings(message = "현재 공급자 프로필을 이 브라우저에 저장했습니다. API 키·원본 문서는 저장하지 않습니다.") {
+  const supplier = activeAiSupplier();
+  supplier.endpoint = document.querySelector("#ai-endpoint").value.trim();
+  supplier.model = document.querySelector("#ai-model").value.trim();
+  try { validateAiSupplier(supplier); } catch (error) { updateAiManager(error.message); return false; }
+  persistAiSettings();
+  updateAiManager(message);
+  return true;
+}
+
+function registerAiSupplier() {
+  const name = document.querySelector("#new-ai-supplier-name").value.trim();
+  const kind = document.querySelector("#new-ai-supplier-kind").value;
+  const endpoint = document.querySelector("#new-ai-supplier-endpoint").value.trim();
+  const model = document.querySelector("#new-ai-supplier-model").value.trim();
+  if (!name) { updateAiManager("공급자 이름을 입력하세요."); return; }
+  const supplier = { id: `supplier-${Date.now()}`, name, kind, endpoint, model, status: "unverified" };
+  try { validateAiSupplier(supplier); } catch (error) { updateAiManager(error.message); return; }
+  state.ai.suppliers.push(supplier);
+  state.ai.activeId = supplier.id;
+  persistAiSettings(); renderAiSupplierOptions(); syncActiveAiInputs(); updateAiManager(`${name} 공급자 프로필을 등록했습니다. 이제 ‘공급자 연결 확인’으로 실제 연결을 확인하세요.`);
+  ["#new-ai-supplier-name", "#new-ai-supplier-endpoint", "#new-ai-supplier-model"].forEach((selector) => { document.querySelector(selector).value = ""; });
 }
 
 async function testAiConnection() {
-  if (document.querySelector("#ai-provider").value !== "ollama") { updateAiManager("내장 규칙 엔진은 이 브라우저에서 바로 동작합니다. 로컬 LLM을 확인하려면 분석 방식을 Ollama로 바꾸세요."); return; }
+  const supplier = activeAiSupplier();
+  if (supplier.kind === "rules") { updateAiManager("내장 증빙 규칙은 이 브라우저에서 바로 동작합니다. LLM을 쓰려면 등록한 공급자 프로필을 선택하세요."); return; }
+  if (!saveAiSettings()) return;
   const result = document.querySelector("#ai-run-result");
-  result.textContent = "로컬 Ollama 연결 확인 중…";
+  result.textContent = `${supplier.name} 연결 확인 중…`;
   try {
-    const response = await fetch(localOllamaUrl("/api/tags"));
+    const response = await fetch(supplierUrl(supplier, supplier.kind === "ollama" ? "api/tags" : "models"));
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const payload = await response.json();
-    const models = payload.models?.map(({ name }) => name).filter(Boolean) || [];
-    if (!document.querySelector("#ai-model").value && models[0]) document.querySelector("#ai-model").value = models[0];
-    result.textContent = models.length ? `로컬 Ollama 연결됨 · 사용 가능한 모델: ${models.slice(0, 3).join(", ")}` : "로컬 Ollama에는 아직 설치된 모델이 없습니다.";
-  } catch (error) { result.textContent = `로컬 LLM 연결 실패: ${error.message}`; }
+    const models = supplier.kind === "ollama" ? payload.models?.map(({ name }) => name).filter(Boolean) || [] : payload.data?.map(({ id }) => id).filter(Boolean) || [];
+    if (!supplier.model && models[0]) { supplier.model = models[0]; document.querySelector("#ai-model").value = supplier.model; persistAiSettings(); }
+    supplier.status = "ready";
+    updateAiManager(models.length ? `${supplier.name} 연결됨 · 사용 가능한 모델: ${models.slice(0, 3).join(", ")}` : `${supplier.name} 연결됨 · 모델 목록은 공급자 정책상 제공되지 않습니다.`);
+  } catch (error) { supplier.status = "failed"; updateAiManager(`${supplier.name} 연결 실패: ${error.message}`); }
 }
 
 async function runAiPreflight() {
   const asset = state.assets.find(({ id }) => id === state.selectedId);
   const result = document.querySelector("#ai-run-result");
+  const supplier = activeAiSupplier();
   if (!asset) return;
-  if (document.querySelector("#ai-provider").value !== "ollama") {
-    result.textContent = `Release Scout 완료: ${asset.aiReview.summary} 다음 행동: ${asset.aiReview.nextAction}`;
-    return;
-  }
-  const model = document.querySelector("#ai-model").value.trim();
-  if (!model) { result.textContent = "먼저 로컬 Ollama 모델 이름을 입력하거나 연결 확인으로 감지하세요."; return; }
-  result.textContent = "로컬 LLM이 문서 원본 없이 메타데이터·버전·승인 상태를 점검 중…";
+  if (supplier.kind === "rules") { result.textContent = `Release Scout 완료: ${asset.aiReview.summary} 다음 행동: ${asset.aiReview.nextAction}`; return; }
+  if (!saveAiSettings()) return;
+  if (!supplier.model) { result.textContent = "먼저 모델 이름을 입력하거나 공급자 연결 확인으로 감지하세요."; return; }
+  result.textContent = `${supplier.name}이 문서 원본 없이 메타데이터·버전·승인 상태를 점검 중…`;
   const metadata = { assetId: asset.id, assetName: asset.name, document: asset.documents.map(({ version, type, status }) => ({ version, type, status })), currentGate: labels[asset.status], detectedIssues: asset.aiReview.issues };
+  const messages = [{ role: "system", content: "You are a release-risk assistant. Write concise Korean. Never approve or provide legal advice. State that a human wallet approval is required." }, { role: "user", content: `Analyze only this metadata, not source documents: ${JSON.stringify(metadata)}` }];
   try {
-    const response = await fetch(localOllamaUrl("/api/chat"), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ model, stream: false, messages: [{ role: "system", content: "You are a release-risk assistant. Write concise Korean. Never approve or provide legal advice. State that a human wallet approval is required." }, { role: "user", content: `Analyze only this metadata, not source documents: ${JSON.stringify(metadata)}` }] }) });
+    const ollama = supplier.kind === "ollama";
+    const response = await fetch(supplierUrl(supplier, ollama ? "api/chat" : "chat/completions"), { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(ollama ? { model: supplier.model, stream: false, messages } : { model: supplier.model, messages }) });
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const payload = await response.json();
-    const draft = payload.message?.content?.trim();
+    const draft = ollama ? payload.message?.content?.trim() : payload.choices?.[0]?.message?.content?.trim();
     if (!draft) throw new Error("응답 본문이 없습니다.");
-    result.textContent = `로컬 LLM 사전점검 초안: ${draft}`;
-  } catch (error) { result.textContent = `로컬 LLM 점검 실패: ${error.message}`; }
+    result.textContent = `${supplier.name} 사전점검 초안: ${draft}`;
+  } catch (error) { result.textContent = `${supplier.name} 점검 실패: ${error.message}`; }
 }
 
 async function init() {
@@ -262,8 +337,9 @@ document.querySelectorAll("[data-workflow-step]").forEach((tab) => tab.addEventL
 document.querySelector("#workflow-prev").addEventListener("click", () => setWorkflowStep(Math.max(0, state.workflowStep - 1)));
 document.querySelector("#workflow-next").addEventListener("click", () => setWorkflowStep(state.workflowStep === workflowStages.length - 1 ? 0 : state.workflowStep + 1));
 document.querySelector("#workflow-open").addEventListener("click", openWorkflowScreen);
-document.querySelector("#ai-provider").addEventListener("change", () => updateAiManager());
+document.querySelector("#ai-provider").addEventListener("change", (event) => selectAiSupplier(event.target.value));
 document.querySelector("#save-ai-settings").addEventListener("click", saveAiSettings);
 document.querySelector("#test-ai-connection").addEventListener("click", testAiConnection);
 document.querySelector("#run-ai-preflight").addEventListener("click", runAiPreflight);
+document.querySelector("#register-ai-supplier").addEventListener("click", registerAiSupplier);
 init().catch((error) => { document.querySelector("#asset-detail").textContent = "데모 데이터를 불러오지 못했습니다."; console.error(error); });
