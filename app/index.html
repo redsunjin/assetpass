@@ -76,7 +76,7 @@
         <ol id="receipt-timeline" class="timeline">
           <li><time>10:00</time><div><strong>Asset Watcher 점검 완료</strong><p>잔액 기준 미달을 감지했습니다.</p></div></li>
           <li><time>10:01</time><div><strong>Transaction Planner 거래안 생성</strong><p>정책 범위 안의 0.0010 Test ETH 보충안을 만들었습니다.</p></div></li>
-          <li><time>—</time><div><strong>사람의 지갑 승인 대기</strong><p>승인된 거래만 GIWA에서 실행하고 tx hash를 영수증에 붙입니다.</p></div></li>
+          <li><time id="execution-time">—</time><div><strong id="execution-title">사람의 지갑 승인 대기</strong><p id="execution-detail">승인된 거래만 GIWA에서 실행하고 tx hash를 영수증에 붙입니다.</p><a id="receipt-explorer" class="receipt-link" hidden target="_blank" rel="noreferrer">GIWA Explorer에서 거래 확인</a></div></li>
         </ol>
       </section>
 
@@ -94,7 +94,9 @@
         </article>
         <article id="policy-settings" class="panel">
           <p class="eyebrow">Policy guard</p><h2><svg class="inline-icon"><use href="assets/assetops-icons.svg#policy"></use></svg>사람이 정한 실행 규칙</h2>
-          <dl class="settings-list"><div><dt>건당 한도</dt><dd>0.005 Test ETH</dd></div><div><dt>승인된 수신 계정</dt><dd>보충 계정 1개</dd></div><div><dt>자동 실행</dt><dd>사용 안 함</dd></div><div><dt>검사 주기</dt><dd>매일 09:00 · 실제 스케줄러 연결 전</dd></div></dl>
+          <dl class="settings-list"><div><dt>건당 한도</dt><dd>0.005 Test ETH</dd></div><div><dt>승인된 수신 계정</dt><dd>보충 계정 1개</dd></div><div><dt>온체인 정책</dt><dd id="policy-contract-state">테스트넷 배포 전</dd></div><div><dt>자동 실행</dt><dd>사용 안 함</dd></div><div><dt>검사 주기</dt><dd>매일 09:00 · 실제 스케줄러 연결 전</dd></div></dl>
+          <button id="register-policy" class="button secondary" type="button">지갑으로 정책 등록</button>
+          <p id="policy-result" class="result" aria-live="polite">배포 뒤, 컨트랙트 소유자 지갑이 수신 계정과 한도를 한 번 등록합니다.</p>
           <p class="muted">정책 검사는 LLM이 아니라 결정적 규칙 엔진이 수행합니다. 서비스 환경에서는 서버 스케줄러가 Watcher를 호출합니다.</p>
         </article>
         <article id="ai-settings" class="panel ai-settings">

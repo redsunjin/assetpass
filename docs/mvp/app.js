@@ -8,6 +8,27 @@ const state = { account: null, balance: DEMO_BALANCE, proposal: "pending", aiPro
 const $ = (selector) => document.querySelector(selector);
 const shortAddress = (value) => `${value.slice(0, 6)}…${value.slice(-4)}`;
 const formatEth = (value) => `${Number(value).toFixed(4)} ETH`;
+const CONTROLLER_CALLS = Object.freeze({
+  // executePayment(address,uint256,bytes32,bytes32)
+  executePayment: "0x28565f9e",
+  // setPayeePolicy(address,bool,uint96)
+  setPayeePolicy: "0x8e20dd4f",
+  // payeePolicies(address)
+  payeePolicies: "0x2eb172d7",
+});
+
+function word(value) { return String(value).replace(/^0x/, "").padStart(64, "0"); }
+function addressWord(value) { return word(String(value).toLowerCase()); }
+function uintWord(value) { return word(BigInt(value).toString(16)); }
+function boolWord(value) { return word(value ? "1" : "0"); }
+function encodeCall(selector, values) { return `${selector}${values.join("")}`; }
+function toWei(eth) { return BigInt(Math.round(Number(eth) * 1e18)); }
+function explorerTxUrl(txHash) { return `${config.chain.blockExplorerUrls[0].replace(/\/$/, "")}/tx/${txHash}`; }
+async function sha256Hex(value) {
+  const bytes = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return `0x${Array.from(new Uint8Array(digest)).map((byte) => byte.toString(16).padStart(2, "0")).join("")}`;
+}
 
 function setResult(selector, text, tone = "") {
   const node = $(selector); node.textContent = text; node.className = `result ${tone}`;
@@ -53,7 +74,7 @@ async function connectWallet() {
     state.account = account;
     const hexBalance = await window.ethereum.request({ method: "eth_getBalance", params: [account, "latest"] });
     state.balance = Number(BigInt(hexBalance)) / 1e18;
-    renderAccount(); setResult("#proposal-result", "GIWA Sepolia 지갑을 연결했습니다. 실제 잔액을 다시 점검할 수 있습니다.", "success");
+    renderAccount(); await refreshOnchainPolicy(); setResult("#proposal-result", "GIWA Sepolia 지갑을 연결했습니다. 실제 잔액과 온체인 정책을 다시 점검할 수 있습니다.", "success");
   } catch (error) { setResult("#proposal-result", `지갑 연결을 완료하지 못했습니다: ${error.message || error}`, "error"); }
 }
 function runWatcher() {
@@ -69,8 +90,65 @@ function runWatcher() {
     setResult("#proposal-result", "Asset Watcher가 부족을 감지했고, Transaction Planner가 정책 통과 거래안을 다시 만들었습니다.", "success");
   } else if (state.proposal === "pending") { state.proposal = "held"; renderProposal(); setResult("#proposal-result", "현재 잔액이 기준을 충족하므로 기존 보충 제안을 보류했습니다.", "success"); }
 }
-function proposalHash() {
-  return `0x${Array.from(new TextEncoder().encode(`${PROPOSAL.id}:${PROPOSAL.recipient}:${PROPOSAL.amountEth}`)).map((n) => n.toString(16).padStart(2, "0")).join("").padEnd(64, "0").slice(0, 64)}`;
+function policySnapshot() {
+  return JSON.stringify({
+    payee: PROPOSAL.recipient.toLowerCase(),
+    maximumAmountWei: toWei(DEFAULT_POLICY.maxPaymentEth).toString(),
+    automaticExecution: DEFAULT_POLICY.automaticExecution,
+  });
+}
+function proposalSnapshot() {
+  return JSON.stringify({
+    id: PROPOSAL.id,
+    recipient: PROPOSAL.recipient.toLowerCase(),
+    amountWei: toWei(PROPOSAL.amountEth).toString(),
+    reason: "minimum-balance-not-met",
+  });
+}
+async function waitForReceipt(txHash) {
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    const receipt = await window.ethereum.request({ method: "eth_getTransactionReceipt", params: [txHash] });
+    if (receipt?.blockNumber) return receipt;
+    await new Promise((resolve) => window.setTimeout(resolve, 1500));
+  }
+  return null;
+}
+function renderReceipt(txHash, receipt) {
+  const explorer = $("#receipt-explorer");
+  $("#receipt-state").textContent = receipt?.status === "0x1" ? "실행 확인" : "지갑 제출됨";
+  $("#receipt-state").className = "chip success";
+  $("#execution-time").textContent = new Date().toTimeString().slice(0, 5);
+  $("#execution-title").textContent = receipt?.status === "0x1" ? "지갑 승인 거래 실행 확인" : "지갑이 거래를 제출함";
+  $("#execution-detail").textContent = receipt?.status === "0x1"
+    ? "Proof Keeper가 GIWA 영수증을 확인했습니다. 제안·정책 해시와 실제 실행을 Explorer에서 대조할 수 있습니다."
+    : "네트워크 확인을 기다리고 있습니다. Explorer에서 tx hash와 실행 결과를 직접 대조할 수 있습니다.";
+  explorer.href = explorerTxUrl(txHash); explorer.hidden = false;
+  $("#proof-status").textContent = receipt?.status === "0x1" ? "GIWA 실행 영수증을 확인했습니다." : "GIWA 거래 제출 후 영수증을 기다립니다.";
+}
+async function refreshOnchainPolicy() {
+  if (!state.account || !config.controllerAddress || !window.ethereum) return;
+  try {
+    const data = encodeCall(CONTROLLER_CALLS.payeePolicies, [addressWord(PROPOSAL.recipient)]);
+    const result = await window.ethereum.request({ method: "eth_call", params: [{ to: config.controllerAddress, data }, "latest"] });
+    const allowed = BigInt(`0x${result.slice(2, 66)}`) === 1n;
+    const maxAmount = BigInt(`0x${result.slice(66, 130)}`);
+    $("#policy-contract-state").textContent = allowed ? `등록됨 · ${formatEth(Number(maxAmount) / 1e18)}` : "수신 계정 등록 필요";
+  } catch {
+    $("#policy-contract-state").textContent = "온체인 정책 조회 실패";
+  }
+}
+async function registerPolicy() {
+  if (!state.account) { await connectWallet(); if (!state.account) return; }
+  if (!config.controllerAddress) { setResult("#policy-result", "실행 컨트랙트를 GIWA Sepolia에 배포·연결한 뒤 정책을 등록할 수 있습니다.", "error"); return; }
+  const data = encodeCall(CONTROLLER_CALLS.setPayeePolicy, [addressWord(PROPOSAL.recipient), boolWord(true), uintWord(toWei(DEFAULT_POLICY.maxPaymentEth))]);
+  try {
+    setResult("#policy-result", "지갑에서 수신 계정과 0.005 Test ETH 한도를 확인하세요.");
+    const txHash = await window.ethereum.request({ method: "eth_sendTransaction", params: [{ from: state.account, to: config.controllerAddress, data }] });
+    const receipt = await waitForReceipt(txHash);
+    if (receipt?.status === "0x0") throw new Error("정책 등록 거래가 체인에서 실패했습니다.");
+    await refreshOnchainPolicy();
+    setResult("#policy-result", `정책 등록 거래를 제출했습니다. ${receipt ? "GIWA에서 확인됐습니다." : "Explorer에서 확인하세요."}`, "success");
+  } catch (error) { setResult("#policy-result", `정책 등록을 완료하지 못했습니다: ${error.message || error}`, "error"); }
 }
 async function approveProposal() {
   if (!state.account) { await connectWallet(); if (!state.account) return; }
@@ -78,9 +156,19 @@ async function approveProposal() {
     setResult("#proposal-result", "실행 컨트랙트가 아직 배포·연결되지 않았습니다. 이 데모는 거래안·정책 검사까지 제공하며, 실제 자금 실행은 테스트넷 배포 뒤에만 열립니다.", "error");
     return;
   }
-  setResult("#proposal-result", "지갑에서 거래 내용을 확인하세요. AI는 이 거래를 실행할 권한이 없습니다.");
-  // executePayment(address,uint256,bytes32,bytes32) is intentionally called only by the connected wallet.
-  // The controller address remains empty until the tested GIWA deployment is recorded in config.js.
+  const finding = runAssetWatcher({ balanceEth: state.balance });
+  const planned = planTopUp({ finding, recipient: PROPOSAL.recipient, amountEth: PROPOSAL.amountEth, id: PROPOSAL.id });
+  if (planned.status !== "ready-for-human") { setResult("#proposal-result", "현재 제안은 정책 검사를 통과하지 않아 실행하지 않았습니다.", "error"); return; }
+  try {
+    const [immutableProposalHash, immutablePolicyHash] = await Promise.all([sha256Hex(proposalSnapshot()), sha256Hex(policySnapshot())]);
+    const data = encodeCall(CONTROLLER_CALLS.executePayment, [addressWord(PROPOSAL.recipient), uintWord(toWei(PROPOSAL.amountEth)), word(immutableProposalHash), word(immutablePolicyHash)]);
+    setResult("#proposal-result", "지갑에서 수신자·금액·네트워크 수수료를 확인하세요. AI는 이 거래를 실행할 권한이 없습니다.");
+    const txHash = await window.ethereum.request({ method: "eth_sendTransaction", params: [{ from: state.account, to: config.controllerAddress, data }] });
+    const receipt = await waitForReceipt(txHash);
+    if (receipt?.status === "0x0") throw new Error("거래가 체인에서 실패했습니다. 수신 계정 정책과 컨트랙트 잔액을 확인하세요.");
+    state.proposal = "executed"; renderProposal(); renderReceipt(txHash, receipt);
+    setResult("#proposal-result", `지갑이 거래를 제출했습니다. ${receipt ? "GIWA 영수증을 확인했습니다." : "Explorer에서 확인하세요."}`, "success");
+  } catch (error) { setResult("#proposal-result", `거래를 실행하지 않았습니다: ${error.message || error}`, "error"); }
 }
 function holdProposal() {
   state.proposal = "held"; renderProposal(); setResult("#proposal-result", "제안을 보류했습니다. 자금은 이동하지 않았고, 다음 Watcher 점검에서 다시 판단합니다.", "success");
@@ -122,8 +210,8 @@ function initialize() {
   ["#wallet-button", "#settings-wallet-button"].forEach((selector) => $(selector).addEventListener("click", connectWallet));
   ["#run-watcher", "#watcher-run"].forEach((selector) => $(selector).addEventListener("click", runWatcher));
   $("#open-proposal").addEventListener("click", () => $("#proposal-card").scrollIntoView({ behavior: "smooth", block: "center" }));
-  $("#approve-proposal").addEventListener("click", approveProposal); $("#reject-proposal").addEventListener("click", holdProposal); $("#save-ai-settings").addEventListener("click", saveAiSettings); $("#test-ai-connection").addEventListener("click", testAiConnection);
+  $("#approve-proposal").addEventListener("click", approveProposal); $("#reject-proposal").addEventListener("click", holdProposal); $("#register-policy").addEventListener("click", registerPolicy); $("#save-ai-settings").addEventListener("click", saveAiSettings); $("#test-ai-connection").addEventListener("click", testAiConnection);
   document.querySelectorAll(".setup-link").forEach((button) => button.addEventListener("click", () => openSetup(button.dataset.setup)));
-  window.ethereum?.on?.("accountsChanged", ([account]) => { state.account = account || null; renderAccount(); });
+  window.ethereum?.on?.("accountsChanged", ([account]) => { state.account = account || null; renderAccount(); refreshOnchainPolicy(); });
 }
 initialize();
