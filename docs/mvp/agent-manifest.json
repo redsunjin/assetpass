@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "1.0",
+  "product": "Asset Passport AssetOps",
+  "executionRule": "AI may propose and verify; only a connected human wallet may execute.",
+  "agents": [
+    {
+      "id": "asset-watcher",
+      "name": "Asset Watcher",
+      "cadence": "daily 09:00",
+      "inputs": ["wallet balance", "minimum balance", "scheduled payouts", "pending transactions"],
+      "outputs": ["finding", "severity", "recommended next action"],
+      "authority": "observe"
+    },
+    {
+      "id": "transaction-planner",
+      "name": "Transaction Planner",
+      "cadence": "on finding or operator request",
+      "inputs": ["watcher finding", "payee policy", "transaction limit", "budget window"],
+      "outputs": ["immutable proposal snapshot", "reason", "estimated fee", "policy evidence"],
+      "authority": "propose"
+    },
+    {
+      "id": "proof-keeper",
+      "name": "Proof Keeper",
+      "cadence": "after wallet execution",
+      "inputs": ["proposal hash", "policy hash", "GIWA transaction receipt"],
+      "outputs": ["execution receipt", "confirmation status", "exception alert"],
+      "authority": "verify"
+    }
+  ],
+  "policy": {
+    "minimumBalanceEth": 0.01,
+    "maxPaymentEth": 0.005,
+    "allowlistedPayees": ["0x8A45D58f4f9D774A50E33D4C34eEDC1C7aA13E19"],
+    "automaticExecution": false
+  }
+}

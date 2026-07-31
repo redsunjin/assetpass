@@ -4,7 +4,7 @@
 Work autonomously toward the requested goal.
 
 Current default goal:
-- 2026 GIWA GASOK에 Asset Passport를 제출하고, 2026-07-31까지 테스트넷에서 동작하는 안전한 RWA 증빙 MVP를 완성한다.
+- 2026 GIWA GASOK에 Asset Passport를 제출하고, 2026-07-31까지 사람이 승인한 거래만 실행되는 안전한 AI 기반 온체인 AssetOps MVP를 완성한다.
 
 Selected method:
 - gsd

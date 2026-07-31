@@ -10,7 +10,7 @@ const files = {
 for (const [name, source] of Object.entries(files)) {
   if (!source.trim()) throw new Error(`UI file is empty: ${name}`);
 }
-for (const marker of ["eth_requestAccounts", "wallet_switchEthereumChain", "Asset Watcher", "Transaction Planner", "Proof Keeper", "Policy Guard", "AI transaction proposal", "지갑으로 실행", "controllerAddress"]) {
+for (const marker of ["eth_requestAccounts", "wallet_switchEthereumChain", "Asset Watcher", "Transaction Planner", "Proof Keeper", "Policy Guard", "AI transaction proposal", "지갑으로 실행", "controllerAddress", "agent-engine.mjs", "공급자 주소", "도입·등록은 세 단계입니다"]) {
   if (!`${files.html}\n${files.js}`.includes(marker)) throw new Error(`UI flow missing: ${marker}`);
 }
 if (!files.config.includes("0x164ce") || !files.config.includes("sepolia-rpc.giwa.io")) {

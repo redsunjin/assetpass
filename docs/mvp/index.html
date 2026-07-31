@@ -42,9 +42,9 @@
       </section>
 
       <section class="operations-only agent-strip" aria-label="AI 에이전트 상태">
-        <article><span class="dot ready"></span><div><small>01 · Asset Watcher</small><strong>지갑 잔액과 예정 지급을 점검</strong><p id="watcher-status">수수료용 잔액이 설정 기준 아래입니다.</p></div><button id="watcher-run" class="text-button" type="button">실행</button></article>
-        <article><span class="dot ready"></span><div><small>02 · Transaction Planner</small><strong>정책 안에서 거래안 작성</strong><p>수신자·금액·근거·예상 수수료를 제안합니다.</p></div></article>
-        <article><span class="dot idle"></span><div><small>03 · Proof Keeper</small><strong>실행 결과를 대조하고 영수증 생성</strong><p id="proof-status">승인 뒤 GIWA 거래를 확인합니다.</p></div></article>
+        <article><svg class="agent-icon"><use href="assets/assetops-icons.svg#watcher"></use></svg><div><small>01 · Asset Watcher</small><strong>지갑 잔액과 예정 지급을 점검</strong><p id="watcher-status">수수료용 잔액이 설정 기준 아래입니다.</p></div><button id="watcher-run" class="text-button" type="button">실행</button></article>
+        <article><svg class="agent-icon"><use href="assets/assetops-icons.svg#planner"></use></svg><div><small>02 · Transaction Planner</small><strong>정책 안에서 거래안 작성</strong><p>수신자·금액·근거·예상 수수료를 제안합니다.</p></div></article>
+        <article><svg class="agent-icon muted-icon"><use href="assets/assetops-icons.svg#proof"></use></svg><div><small>03 · Proof Keeper</small><strong>실행 결과를 대조하고 영수증 생성</strong><p id="proof-status">승인 뒤 GIWA 거래를 확인합니다.</p></div></article>
       </section>
 
       <section class="operations-only dashboard" aria-label="온체인 자산 운영 대시보드">
@@ -80,6 +80,11 @@
         </ol>
       </section>
 
+      <section class="operations-only onboarding panel" aria-labelledby="onboarding-title">
+        <div><p class="eyebrow">First-time setup</p><h2 id="onboarding-title">도입·등록은 세 단계입니다</h2><p class="muted">AI를 켜기 전에 자산 계정과 실행 규칙을 사람이 먼저 등록합니다.</p></div>
+        <ol><li><span>01</span><div><strong>운영 지갑 연결</strong><small>GIWA Sepolia의 조회·실행 주체를 확인합니다.</small></div><button class="text-button setup-link" data-setup="wallet" type="button">설정</button></li><li><span>02</span><div><strong>정책 등록</strong><small>최소 잔액, 수신자 화이트리스트, 건당 한도를 정합니다.</small></div><button class="text-button setup-link" data-setup="policy" type="button">설정</button></li><li><span>03</span><div><strong>AI 공급자·점검 주기 선택</strong><small>규칙 엔진 또는 로컬/릴레이 LLM을 선택하고 결과를 검토합니다.</small></div><button class="text-button setup-link" data-setup="ai" type="button">설정</button></li></ol>
+      </section>
+
       <section class="settings-only settings-grid" aria-label="Asset Passport 설정">
         <article class="panel">
           <p class="eyebrow">Wallet & network</p><h2>운영 지갑과 GIWA</h2>
@@ -87,17 +92,18 @@
           <button id="settings-wallet-button" class="button secondary" type="button">지갑 연결 및 네트워크 확인</button>
           <p class="muted">개인키·복구 구문은 입력받지 않습니다. MVP에서는 테스트 자금만 사용합니다.</p>
         </article>
-        <article class="panel">
-          <p class="eyebrow">Policy guard</p><h2>사람이 정한 실행 규칙</h2>
+        <article id="policy-settings" class="panel">
+          <p class="eyebrow">Policy guard</p><h2><svg class="inline-icon"><use href="assets/assetops-icons.svg#policy"></use></svg>사람이 정한 실행 규칙</h2>
           <dl class="settings-list"><div><dt>건당 한도</dt><dd>0.005 Test ETH</dd></div><div><dt>허용 수신자</dt><dd>운영 보충 지갑 1개</dd></div><div><dt>자동 실행</dt><dd>사용 안 함</dd></div><div><dt>검사 주기</dt><dd>매일 09:00 · 실제 스케줄러 연결 전</dd></div></dl>
           <p class="muted">정책 검사는 LLM이 아니라 결정적 규칙 엔진이 수행합니다. 운영 환경에서는 서버 스케줄러가 Watcher를 호출합니다.</p>
         </article>
-        <article class="panel ai-settings">
+        <article id="ai-settings" class="panel ai-settings">
           <p class="eyebrow">AI supplier & agents</p><h2>AI는 제안하고 설명합니다</h2>
           <label>현재 공급자<select id="ai-provider"><option value="rules">내장 규칙 엔진 · LLM 미사용</option><option value="ollama">로컬 Ollama · 이 기기</option><option value="relay">외부 AI 보안 릴레이</option></select></label>
+          <label>공급자 주소<input id="ai-endpoint" type="url" inputmode="url" placeholder="로컬: http://127.0.0.1:11434 / 릴레이: https://…" /></label>
           <label>모델 또는 공급자 설명<input id="ai-model" type="text" placeholder="예: llama3.2:3b" /></label>
           <div class="agent-roles"><div><strong>Asset Watcher</strong><span>잔액·일정·미확정 거래 점검</span></div><div><strong>Transaction Planner</strong><span>거래안과 근거 작성</span></div><div><strong>Proof Keeper</strong><span>GIWA 결과 대조·영수증 정리</span></div></div>
-          <button id="save-ai-settings" class="button secondary" type="button">AI 설정 저장</button>
+          <div class="settings-actions"><button id="save-ai-settings" class="button secondary" type="button">AI 설정 저장</button><button id="test-ai-connection" class="button secondary" type="button">연결 확인</button></div>
           <p id="ai-settings-result" class="result" aria-live="polite">LLM은 설명·요약을 보조합니다. 승인·한도 검사·송금 권한은 갖지 않습니다.</p>
         </article>
       </section>
@@ -109,6 +115,6 @@
       </section>
     </main>
     <script src="config.js"></script>
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
   </body>
 </html>
