@@ -72,6 +72,8 @@ forge script contracts/script/DeployAssetPassportController.s.sol:DeployAssetPas
 - 실행 tx hash와 Explorer 링크
 - MVP 화면에서 제안·정책·영수증이 같은 수신자와 금액을 가리키는 캡처
 
+2026-07-31에 완료한 GIWA Sepolia Test ETH E2E의 주소·tx hash는 [testnet-e2e-evidence.md](testnet-e2e-evidence.md)에 기록한다.
+
 ## 중단 기준
 
 - 실제 자산이 든 지갑, 메인넷, 실제 ETH가 감지되면 즉시 중단한다.
