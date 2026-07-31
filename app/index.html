@@ -13,14 +13,14 @@
         <div>
           <p class="eyebrow">GIWA Sepolia · Demo only</p>
           <h1>Asset Passport</h1>
-          <p class="subtitle">AI가 자산 상태를 점검하고 거래안을 제안하면, 사람의 지갑 승인이 있어야만 온체인에서 실행되는 자산 운영 도구</p>
+          <p class="subtitle">AI가 자산 상태를 점검하고 거래안을 제안하면, 사람의 지갑 승인이 있어야만 온체인에서 실행되는 자산 통제 도구</p>
         </div>
         <button id="wallet-button" class="button secondary" type="button">지갑 연결</button>
       </header>
 
       <nav class="view-tabs" aria-label="Asset Passport 화면">
-        <button class="view-tab active" type="button" data-view="operations" aria-pressed="true">오늘의 운영</button>
-        <button class="view-tab" type="button" data-view="settings" aria-pressed="false">정책 · 지갑 · AI 설정</button>
+        <button class="view-tab active" type="button" data-view="operations" aria-pressed="true">자산 현황</button>
+        <button class="view-tab" type="button" data-view="settings" aria-pressed="false">통제 정책 · 연결</button>
       </nav>
 
       <aside class="notice">
@@ -29,7 +29,7 @@
 
       <section class="operations-only hero" aria-labelledby="hero-title">
         <div>
-          <p class="eyebrow">Today’s AssetOps</p>
+          <p class="eyebrow">Asset control status</p>
           <p id="hero-state" class="state waiting">승인 대기</p>
           <h2 id="hero-title">AI가 확인한 거래안 1건이 있습니다.</h2>
           <p id="hero-copy">정책 범위 안의 소액 Test ETH 보충 거래입니다. 내용 확인 뒤 지갑으로 실행할 수 있습니다.</p>
@@ -47,9 +47,9 @@
         <article><svg class="agent-icon muted-icon"><use href="assets/assetops-icons.svg#proof"></use></svg><div><small>03 · Proof Keeper</small><strong>실행 결과를 대조하고 영수증 생성</strong><p id="proof-status">승인 뒤 GIWA 거래를 확인합니다.</p></div></article>
       </section>
 
-      <section class="operations-only dashboard" aria-label="온체인 자산 운영 대시보드">
+      <section class="operations-only dashboard" aria-label="온체인 자산 통제 현황">
         <article class="panel balance-panel">
-          <div class="panel-heading"><div><p class="eyebrow">Monitored asset account</p><h2>운영 지갑</h2></div><span id="wallet-state" class="chip">연결 전</span></div>
+          <div class="panel-heading"><div><p class="eyebrow">Monitored asset account</p><h2>자산 계정</h2></div><span id="wallet-state" class="chip">연결 전</span></div>
           <p id="account-address" class="address">지갑을 연결하면 실제 잔액을 확인합니다</p>
           <div class="balance"><span>Test ETH 잔액</span><strong id="wallet-balance">0.0062 ETH</strong><small>정책 기준: 0.0100 ETH 이상</small></div>
           <div class="meter" aria-label="잔액 정책 기준 대비"><span id="balance-meter"></span></div>
@@ -58,14 +58,14 @@
 
         <article id="proposal-card" class="panel proposal-panel" tabindex="-1">
           <div class="panel-heading"><div><p class="eyebrow">AI transaction proposal</p><h2>수수료용 잔액 보충</h2></div><span id="proposal-state" class="chip warning">승인 필요</span></div>
-          <p class="proposal-summary">Asset Watcher가 다음 지급 전 수수료 부족 가능성을 감지했습니다. Transaction Planner가 허용된 운영 지갑으로 보충을 제안합니다.</p>
+          <p class="proposal-summary">Asset Watcher가 다음 지급 전 수수료 부족 가능성을 감지했습니다. Transaction Planner가 승인된 수신 계정으로 보충을 제안합니다.</p>
           <dl class="proposal-facts">
             <div><dt>보낼 금액</dt><dd id="proposal-amount">0.0010 Test ETH</dd></div>
             <div><dt>수신자</dt><dd id="proposal-recipient" class="address">0x8A45…3E19</dd></div>
             <div><dt>근거</dt><dd>잔액 기준 미달 · 다음 정산 전 보충</dd></div>
             <div><dt>예상 수수료</dt><dd>네트워크 지갑에서 확인</dd></div>
           </dl>
-          <div class="policy-check"><span>Policy Guard · 정책 검사 통과</span><strong>허용 수신자 · 건당 한도 0.005 ETH · 운영 시간 모두 충족</strong></div>
+          <div class="policy-check"><span>Policy Guard · 정책 검사 통과</span><strong>승인된 수신 계정 · 건당 한도 0.005 ETH · 허용 시간대 모두 충족</strong></div>
           <div class="proposal-actions"><button id="approve-proposal" class="button primary" type="button">내용 확인 후 지갑으로 실행</button><button id="reject-proposal" class="button secondary" type="button">이번 제안 보류</button></div>
           <p id="proposal-result" class="result" aria-live="polite">AI 제안은 실행 권한이 아닙니다. 지갑 승인 전에는 자금이 이동하지 않습니다.</p>
         </article>
@@ -82,20 +82,20 @@
 
       <section class="operations-only onboarding panel" aria-labelledby="onboarding-title">
         <div><p class="eyebrow">First-time setup</p><h2 id="onboarding-title">도입·등록은 세 단계입니다</h2><p class="muted">AI를 켜기 전에 자산 계정과 실행 규칙을 사람이 먼저 등록합니다.</p></div>
-        <ol><li><span>01</span><div><strong>운영 지갑 연결</strong><small>GIWA Sepolia의 조회·실행 주체를 확인합니다.</small></div><button class="text-button setup-link" data-setup="wallet" type="button">설정</button></li><li><span>02</span><div><strong>정책 등록</strong><small>최소 잔액, 수신자 화이트리스트, 건당 한도를 정합니다.</small></div><button class="text-button setup-link" data-setup="policy" type="button">설정</button></li><li><span>03</span><div><strong>AI 공급자·점검 주기 선택</strong><small>규칙 엔진 또는 로컬/릴레이 LLM을 선택하고 결과를 검토합니다.</small></div><button class="text-button setup-link" data-setup="ai" type="button">설정</button></li></ol>
+        <ol><li><span>01</span><div><strong>자산 계정 연결</strong><small>GIWA Sepolia의 조회·실행 주체를 확인합니다.</small></div><button class="text-button setup-link" data-setup="wallet" type="button">설정</button></li><li><span>02</span><div><strong>통제 정책 등록</strong><small>최소 잔액, 수신자 화이트리스트, 건당 한도를 정합니다.</small></div><button class="text-button setup-link" data-setup="policy" type="button">설정</button></li><li><span>03</span><div><strong>AI 공급자·점검 주기 선택</strong><small>규칙 엔진 또는 로컬/릴레이 LLM을 선택하고 결과를 검토합니다.</small></div><button class="text-button setup-link" data-setup="ai" type="button">설정</button></li></ol>
       </section>
 
       <section class="settings-only settings-grid" aria-label="Asset Passport 설정">
         <article class="panel">
-          <p class="eyebrow">Wallet & network</p><h2>운영 지갑과 GIWA</h2>
+          <p class="eyebrow">Account & network</p><h2>자산 계정과 GIWA</h2>
           <dl class="settings-list"><div><dt>연결 지갑</dt><dd id="settings-account">연결 전</dd></div><div><dt>네트워크</dt><dd id="network-name">GIWA Sepolia 확인 전</dd></div><div><dt>실행 컨트랙트</dt><dd id="controller-address" class="address">테스트넷 배포 전</dd></div></dl>
           <button id="settings-wallet-button" class="button secondary" type="button">지갑 연결 및 네트워크 확인</button>
           <p class="muted">개인키·복구 구문은 입력받지 않습니다. MVP에서는 테스트 자금만 사용합니다.</p>
         </article>
         <article id="policy-settings" class="panel">
           <p class="eyebrow">Policy guard</p><h2><svg class="inline-icon"><use href="assets/assetops-icons.svg#policy"></use></svg>사람이 정한 실행 규칙</h2>
-          <dl class="settings-list"><div><dt>건당 한도</dt><dd>0.005 Test ETH</dd></div><div><dt>허용 수신자</dt><dd>운영 보충 지갑 1개</dd></div><div><dt>자동 실행</dt><dd>사용 안 함</dd></div><div><dt>검사 주기</dt><dd>매일 09:00 · 실제 스케줄러 연결 전</dd></div></dl>
-          <p class="muted">정책 검사는 LLM이 아니라 결정적 규칙 엔진이 수행합니다. 운영 환경에서는 서버 스케줄러가 Watcher를 호출합니다.</p>
+          <dl class="settings-list"><div><dt>건당 한도</dt><dd>0.005 Test ETH</dd></div><div><dt>승인된 수신 계정</dt><dd>보충 계정 1개</dd></div><div><dt>자동 실행</dt><dd>사용 안 함</dd></div><div><dt>검사 주기</dt><dd>매일 09:00 · 실제 스케줄러 연결 전</dd></div></dl>
+          <p class="muted">정책 검사는 LLM이 아니라 결정적 규칙 엔진이 수행합니다. 서비스 환경에서는 서버 스케줄러가 Watcher를 호출합니다.</p>
         </article>
         <article id="ai-settings" class="panel ai-settings">
           <p class="eyebrow">AI supplier & agents</p><h2>AI는 제안하고 설명합니다</h2>

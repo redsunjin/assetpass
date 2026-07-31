@@ -1,6 +1,6 @@
 # Asset Passport
 
-Asset Passport는 AI가 온체인 자산 상태를 정기 점검하고 거래안을 만들면, **사람의 지갑 승인이 있어야만** GIWA에서 실행·증명되는 AI 기반 자산운영(AssetOps) 도구다.
+Asset Passport는 AI가 온체인 자산 상태를 정기 점검하고 거래안을 만들면, **사람의 지갑 승인이 있어야만** GIWA에서 실행·증명되는 AI 기반 자산 통제(Asset Control) 도구다.
 
 이 프로젝트는 2026 GIWA GASOK을 위한 테스트넷 MVP다. 기존 RWA 공시 Release Gate 가설에서 피벗해, AI 시대의 온체인 거래 통제라는 더 좁고 검증 가능한 문제에 집중한다.
 
