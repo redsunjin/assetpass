@@ -48,6 +48,20 @@ function openWorkflowScreen() {
   target?.focus?.({ preventScroll: true });
 }
 
+function moveWorkflowTabByKeyboard(event) {
+  const tabs = [...document.querySelectorAll("[data-workflow-step]")];
+  const current = Number(event.currentTarget.dataset.workflowStep);
+  let next = null;
+  if (["ArrowRight", "ArrowDown"].includes(event.key)) next = (current + 1) % tabs.length;
+  if (["ArrowLeft", "ArrowUp"].includes(event.key)) next = (current - 1 + tabs.length) % tabs.length;
+  if (event.key === "Home") next = 0;
+  if (event.key === "End") next = tabs.length - 1;
+  if (next === null) return;
+  event.preventDefault();
+  setWorkflowStep(next);
+  document.querySelector(`#workflow-tab-${next}`)?.focus();
+}
+
 function renderGate(asset) {
   const blocked = asset.aiReview.decision === "block";
   const stateEl = document.querySelector("#gate-state");
@@ -333,7 +347,10 @@ async function init() {
 
 document.querySelector("#wallet-button").addEventListener("click", connectWallet);
 document.querySelector("#manager-wallet-button").addEventListener("click", connectWallet);
-document.querySelectorAll("[data-workflow-step]").forEach((tab) => tab.addEventListener("click", () => setWorkflowStep(Number(tab.dataset.workflowStep))));
+document.querySelectorAll("[data-workflow-step]").forEach((tab) => {
+  tab.addEventListener("click", () => setWorkflowStep(Number(tab.dataset.workflowStep)));
+  tab.addEventListener("keydown", moveWorkflowTabByKeyboard);
+});
 document.querySelector("#workflow-prev").addEventListener("click", () => setWorkflowStep(Math.max(0, state.workflowStep - 1)));
 document.querySelector("#workflow-next").addEventListener("click", () => setWorkflowStep(state.workflowStep === workflowStages.length - 1 ? 0 : state.workflowStep + 1));
 document.querySelector("#workflow-open").addEventListener("click", openWorkflowScreen);
