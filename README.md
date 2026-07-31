@@ -1,51 +1,42 @@
 # Asset Passport
 
-AI가 공시 전 위험을 먼저 제안하고, 사람이 승인한 최신 공개 상태만 GIWA에 증명하는 **RWA AI Release Gate**다. 2026 GIWA GASOK의 `DeFi / RWA` 및 `GIWA-native Ideas` 트랙 제출을 위한 프로젝트다.
+Asset Passport는 AI가 온체인 자산 상태를 정기 점검하고 거래안을 만들면, **사람의 지갑 승인이 있어야만** GIWA에서 실행·증명되는 AI 기반 자산운영(AssetOps) 도구다.
 
-## 문제
+이 프로젝트는 2026 GIWA GASOK을 위한 테스트넷 MVP다. 기존 RWA 공시 Release Gate 가설에서 피벗해, AI 시대의 온체인 거래 통제라는 더 좁고 검증 가능한 문제에 집중한다.
 
-RWA의 신뢰 문제는 토큰을 발행하는 데서 끝나지 않는다. 공시 직전에는 문서가 바뀌고 검토가 늦어지며, 이전 버전에 묶인 승인이 그대로 남을 수 있다. Asset Passport는 AI가 그 위험과 다음 행동을 먼저 제안하고, 책임자가 지갑으로 승인한 사실만 변경 추적 가능하게 만든다.
+## 첫 시연
 
-## MVP 범위
+`Asset Watcher`가 운영 지갑의 Test ETH 잔액 부족을 감지 → `Transaction Planner`가 허용된 보충 지갑으로 `0.001 Test ETH` 거래를 제안 → `Policy Guard`가 수신자와 한도를 검사 → 사람이 지갑으로 실행 → `Proof Keeper`가 GIWA tx hash를 영수증으로 대조한다.
 
-- 가상 자산 3건의 등록과 라이프사이클 상태 관리
-- 문서 버전과 SHA-256 해시 기록
-- AI Release Copilot의 공시 위험·증빙 누락·승인 연결 사전 점검 제안
-- 관리자 콘솔: 지갑·역할·GIWA 네트워크 상태, AI 제공 방식, 에이전트 책임 범위, 공개 절차 단계 표시
-- 선택적 로컬 Ollama 사전 점검: 원본 문서 없이 메타데이터만 `localhost`로 전송 (외부 AI는 보안 릴레이 전까지 비활성)
-- 발행자·검토자·감사자 역할의 지갑 서명/승인 이력
-- GIWA 테스트넷 Asset Registry에 자산 ID·문서 해시·상태 변경 이력 기록
-- 지갑 연결 사용자의 공개 검증 화면과 공시 캘린더
+AI는 개인키를 보유하거나 자동 이체하지 않는다. LLM은 설명과 제안을 보조하고, 정책 검사와 최종 실행은 규칙 엔진과 사람 지갑이 통제한다.
 
-## 명시적 비범위
+## 왜 GIWA인가
 
-- 실제 자산 발행, 판매, 매매, 투자 권유
-- 자금 보관·이체·배당 지급·수익률 표시
-- 실명 투자자 데이터 또는 실제 계약서 처리
-- 투자자 적격성·법적 공시 완전성·규제 준수의 자동 판정 또는 보장
-- AI의 자동 승인·자동 공시·법률 판단
+승인 대상 자체가 온체인 자산 거래이기 때문이다. 제안 해시·정책 해시·지갑 서명·실제 자산 이동을 같은 체인에서 대조할 수 있다. 일반적인 사내 결재·ERP를 블록체인에 억지로 올리는 제품은 아니다.
 
-이 프로젝트는 법률 자문이나 금융서비스가 아니라, 샘플 데이터 기반의 운영·증빙 소프트웨어 데모다.
+## 사용자 가설
 
-## 빠른 길잡이
+- 초기: Web3 프로젝트, DAO, RWA 운영팀의 재무·운영 담당자
+- 확장: 토큰화 자산의 정산·분배·지급을 운영하는 기업
 
-- [GASOK 지원 브리프](docs/gasok-application-brief.md)
-- [제품 명세](docs/product-spec.md)
-- [MVP 실행 계획](docs/mvp-plan.md)
-- [제출 체크리스트](docs/submission-checklist.md)
+풀 ERP, 법정화폐 회계, 세무·법률 판단, 투자 권유, 실제 자산 수탁은 범위 밖이다.
+
+## 문서
+
+- [AssetOps 제품 명세](docs/asset-passport-assetops-spec.md)
+- [기존 RWA Release Gate 정의](docs/asset-passport-service-definition.md) — 피벗 전 가설 보관용
+- [MVP 정렬 분석](docs/mvp-product-alignment-analysis.md) — 피벗 전 분석 보관용
 - [GIWA 개발 노트](docs/giwa-developer-notes.md)
-- [Definition of Done](docs/definition-of-done.md)
 
 ## 폴더
 
 ```text
-contracts/       GIWA 테스트넷 Asset Registry 스마트컨트랙트
-app/             운영 콘솔 및 공개 검증 UI
-docs/            지원서, 제품, 검증 문서
-data/            명확히 가상임을 표시한 데모 자산 데이터
+contracts/       테스트넷용 정책 기반 Test ETH 실행 컨트랙트와 기존 증빙 Registry
+app/             자산운영 콘솔 UI
+docs/            제품 정의·제출·검증 문서
 scripts/         하네스 및 로컬 검증 스크립트
 ```
 
 ## 현재 상태
 
-최소 `AssetRegistry`와 자기완결형 Foundry 테스트, AI 위험 제안 → 사람의 지갑 승인 → GIWA 증명으로 이어지는 의존성 없는 브라우저 데모를 추가했다. 다음 구현 단위는 GIWA Sepolia에 Registry를 배포하고, 배포 주소를 연결한 뒤 가상 자산의 차단·승인·공개·검증 이력을 초기화하는 일이다.
+로컬 MVP는 AI 에이전트 역할·거래 제안·정책 경계·지갑 연결 UX와 `AssetPassportController` 컨트랙트 테스트를 포함한다. 실제 GIWA 실행은 테스트넷 배포 주소를 `app/config.js`에 기록한 뒤에만 열어야 한다. 개인키나 실제 자금은 절대 사용하지 않는다.

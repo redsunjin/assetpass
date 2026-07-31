@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 
 const source = readFileSync("contracts/src/AssetRegistry.sol", "utf8");
+const controller = readFileSync("contracts/src/AssetPassportController.sol", "utf8");
 const requiredMarkers = [
   "pragma solidity ^0.8.24;",
   "contract AssetRegistry",
@@ -28,3 +29,21 @@ if (/\b(payable|transfer\(|send\(|selfdestruct\b|delegatecall\b)/.test(source)) 
 }
 
 console.log("AssetRegistry static safety and interface checks passed.");
+
+for (const marker of [
+  "pragma solidity ^0.8.24;",
+  "contract AssetPassportController",
+  "function setPayeePolicy",
+  "function executePayment",
+  "event PaymentExecuted",
+  "onlyOwner",
+  "nonReentrant",
+  "executedProposals[proposalHash] = true",
+  "amount > policy.maxAmount",
+]) {
+  if (!controller.includes(marker)) throw new Error(`AssetPassportController missing: ${marker}`);
+}
+if (/delegatecall|selfdestruct/.test(controller)) {
+  throw new Error("AssetPassportController cannot delegate execution or self-destruct.");
+}
+console.log("AssetPassportController static policy-gate checks passed.");
