@@ -1,4 +1,6 @@
-# Asset Passport 서비스 정의 v1.0
+# 아카이브 — Asset Passport 서비스 정의 v1.0
+
+> 이 문서는 2026-07-31 피벗 전 RWA Release Gate 가설 기록이다. 현재 제품 기준은 [AssetOps 제품 명세](asset-passport-assetops-spec.md)와 [GASOK 지원 브리프](gasok-application-brief.md)다.
 
 작성일: 2026-07-31  
 상태: MVP의 제품·UX·기술 범위를 고정하기 위한 기준 문서

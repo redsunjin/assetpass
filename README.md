@@ -39,4 +39,10 @@ scripts/         하네스 및 로컬 검증 스크립트
 
 ## 현재 상태
 
-로컬 MVP는 AI 에이전트 역할·거래 제안·정책 경계·지갑 연결 UX와 `AssetPassportController` 컨트랙트 테스트를 포함한다. 실제 GIWA 실행은 테스트넷 배포 주소를 `app/config.js`에 기록한 뒤에만 열어야 한다. 개인키나 실제 자금은 절대 사용하지 않는다.
+로컬 MVP는 AI 에이전트 역할·거래 제안·정책 경계·지갑 연결 UX와 `AssetPassportController` 컨트랙트 테스트를 포함한다. GIWA Sepolia Controller는 배포·연결되어 있으며, Test ETH 0.001 실행과 중복 거래안 차단을 확인했다. 공개 MVP의 브라우저 지갑 흐름은 Controller owner 지갑으로 별도 수동 점검이 남아 있다. 개인키나 실제 자금은 절대 사용하지 않는다.
+
+## 테스트넷 증빙
+
+- [Controller 주소](https://sepolia-explorer.giwa.io/address/0x4fbD9a0458930A76d6ceCf3B572A093dD9E3dc5f)
+- [PaymentExecuted 영수증](https://sepolia-explorer.giwa.io/tx/0xfc67718e69ac3bdcba54b18057f39eb9b1c51099195b91328a8eccd47b989871)
+- [실행 기록과 남은 검증](docs/testnet-e2e-evidence.md)

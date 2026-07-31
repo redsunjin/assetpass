@@ -1,4 +1,6 @@
-# MVP 실행 계획
+# 아카이브 — MVP 실행 계획
+
+> 이 계획은 피벗 전 Release Gate MVP의 실행 기록이다. 현재 흐름과 검증 상태는 [AssetOps 제품 명세](asset-passport-assetops-spec.md), [테스트넷 E2E 증빙](testnet-e2e-evidence.md), [실행 보드](execution-board.md)를 기준으로 한다.
 
 ## 일정
 

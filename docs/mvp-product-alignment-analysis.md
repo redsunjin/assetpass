@@ -1,4 +1,6 @@
-# Asset Passport MVP 제품 정렬 분석 보고서
+# 아카이브 — Asset Passport MVP 제품 정렬 분석 보고서
+
+> 이 분석은 피벗 전 Release Gate의 문제를 진단한 기록이다. 현재 제품 정렬 점검은 [공개 표면 품질·정합성 점검](public-surface-quality-audit.md)을 기준으로 한다.
 
 작성일: 2026-07-31  
 대상: 현재 `app/` 및 공개 MVP (`/mvp/`)  

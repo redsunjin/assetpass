@@ -37,4 +37,4 @@ h1, h2, p { margin-top: 0; } h1 { margin-bottom: 8px; font-size: clamp(2rem, 5vw
 .journey-rail li.complete { color: #b3e5d3; }.journey-rail li.current { color: #e3efff; }
 .journey-rail li.current > span { color: #091527; border-color: var(--blue); background: var(--blue); }
 .agent-details { margin-top: 14px; }.agent-details summary { cursor: pointer; color: #dce9ff; font-weight: 750; }.agent-details[open] summary { margin-bottom: 14px; }
-@media (max-width: 780px) { .journey-rail { overflow-x: auto; }.journey-rail ol { min-width: 600px; } }
+@media (max-width: 780px) { .journey-rail ol { grid-template-columns: 1fr; }.journey-rail li { padding: 3px 0; }.journey-rail small, .journey-rail strong { white-space: normal; overflow: visible; text-overflow: clip; } }

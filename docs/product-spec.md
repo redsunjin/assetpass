@@ -1,4 +1,6 @@
-# 제품 명세 v0.1
+# 아카이브 — 제품 명세 v0.1
+
+> 이 문서는 피벗 전 RWA Release Gate 제품 명세다. 현재 구현·발표 기준은 [AssetOps 제품 명세](asset-passport-assetops-spec.md)다.
 
 ## 사용자와 역할
 

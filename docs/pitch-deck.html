@@ -33,7 +33,7 @@
       <div class="wrap">
         <div class="num">GIWA GASOK · Track 01 DeFi / RWA</div>
         <h1>Asset<br><span class="accent">Passport</span></h1>
-        <p>온체인 자산 상태를 점검하고, 사람이 승인한 거래만 GIWA에서 실행하도록 설계한 테스트넷 MVP</p>
+        <p>Web3·DAO·RWA 운영팀이 AI 거래안을 사람 지갑 승인 아래에서 실행하도록 돕는 테스트넷 MVP</p>
         <span class="pill">by AssetPass</span>
       </div>
       <footer>01 / 08</footer>
@@ -42,7 +42,7 @@
     <section class="slide">
       <div class="wrap">
         <div class="num">Problem</div>
-        <h2>AI 자동화에도<br><span class="accent">지갑 통제가 필요한</span><br>이유</h2>
+        <h2>온체인 자금을 운영하는 팀은<br><span class="accent">AI에 키를 맡길 수 없습니다.</span></h2>
         <div class="grid">
           <div class="card"><div class="big">잔액</div><p>수수료·정산 지갑의 부족을 사람이 늦게 발견하면 거래가 멈춥니다.</p></div>
           <div class="card"><div class="big">통제</div><p>AI 자동화는 필요하지만 개인키와 무인 송금 권한을 줄 수는 없습니다.</p></div>
@@ -81,7 +81,7 @@
         <div class="grid">
           <div class="card"><h3>같은 체인에서 대조</h3><p>제안·정책 해시, 사람 지갑 실행, 자산 이동을 같은 체인에서 확인합니다.</p></div>
           <div class="card"><h3>지갑 중심 통제</h3><p>표준 EVM 지갑으로 AI의 제안과 사람의 실행 권한을 분리합니다.</p></div>
-          <div class="card"><h3>GIWA Sepolia</h3><p>Test ETH 실행과 이벤트 영수증을 검증할 컨트랙트와 화면을 준비했습니다.</p></div>
+          <div class="card"><h3>GIWA Sepolia</h3><p>Controller 배포, 정책 등록, Test ETH 실행과 이벤트 영수증을 한 건 검증했습니다.</p></div>
         </div>
       </div>
       <footer>05 / 08</footer>
@@ -90,12 +90,12 @@
     <section class="slide">
       <div class="wrap">
         <div class="num">Working demo & validation</div>
-        <h2><span class="accent">한 건의 거래</span>로<br>확인할 범위와<br>다음 검증</h2>
+        <h2><span class="accent">한 건의 거래</span>로<br>확인한 범위와<br>남은 점검</h2>
         <div class="grid two">
-          <div class="card"><h3>현재 구현된 범위</h3><p>자산 계정, 거래안, 정책 검사, 지갑 연결, AI 공급자 설정을 한 화면에서 확인합니다.</p></div>
-          <div class="card"><h3>다음 테스트넷 검증</h3><p>잔액 점검 1회 → 거래안 1회 → 지갑 실행 1회 → GIWA tx hash 영수증 1회를 대조합니다.</p></div>
+          <div class="card"><h3>완료한 Test ETH E2E</h3><p>Controller 배포 → 수신자·0.005 한도 등록 → 0.002 예치 → 0.001 실행 → 동일 거래안 재실행 차단을 확인했습니다.</p></div>
+          <div class="card"><h3>남은 브라우저 점검</h3><p>공개 MVP에서 Controller owner 지갑으로 정책 조회·거래 실행·Explorer 영수증을 한 흐름으로 확인합니다.</p></div>
         </div>
-        <p class="sub">AI는 개인키·자동 승인·자동 이체 권한을 갖지 않습니다. 테스트넷 배포 뒤에는 화면의 제안·정책, 컨트랙트·Explorer 이벤트가 같은 거래를 가리키는지 확인합니다.</p>
+        <p class="sub">실행은 테스트 전용 CLI 지갑으로 확인했습니다. AI는 개인키·자동 승인·자동 이체 권한을 갖지 않으며, 브라우저 지갑 검증과 주기적 Watcher 서비스는 아직 완료하지 않았습니다. <a href="https://sepolia-explorer.giwa.io/tx/0xfc67718e69ac3bdcba54b18057f39eb9b1c51099195b91328a8eccd47b989871">PaymentExecuted 영수증 보기</a></p>
         <iframe class="demo-frame" src="mvp/" title="Asset Passport AssetOps 데모" loading="lazy"></iframe>
       </div>
       <footer>06 / 08</footer>
@@ -104,11 +104,11 @@
     <section class="slide">
       <div class="wrap">
         <div class="num">Roadmap</div>
-        <h2>테스트넷 검증 뒤<br>실제 운영 <span class="accent">파일럿</span></h2>
+        <h2>테스트넷 증명 뒤<br>작은 <span class="accent">운영 파일럿</span></h2>
         <div class="grid">
-          <div class="card"><h3>현재</h3><p>컨트랙트 테스트, 거래안, 정책 검사, 지갑 연결 화면을 준비했습니다.</p></div>
-          <div class="card"><h3>다음</h3><p>GIWA Sepolia에서 Test ETH 거래 1건과 tx hash 영수증을 검증합니다.</p></div>
-          <div class="card"><h3>이후</h3><p>DAO·Web3 재무 운영팀과 정책 템플릿, 잔액 알림, 정산 지급을 검증합니다.</p></div>
+          <div class="card"><h3>현재</h3><p>정책 기반 Controller와 Test ETH E2E 1건을 GIWA Sepolia에서 확인했습니다.</p></div>
+          <div class="card"><h3>다음</h3><p>owner 브라우저 지갑으로 정책·실행·영수증 흐름을 수동 점검합니다.</p></div>
+          <div class="card"><h3>이후</h3><p>DAO·Web3 재무 운영팀과 잔액 알림, 정책 템플릿, 정산 지급의 필요성을 검증합니다.</p></div>
         </div>
       </div>
       <footer>07 / 08</footer>

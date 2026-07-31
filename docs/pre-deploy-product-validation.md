@@ -1,4 +1,6 @@
-# 배포 전 제품 검증 기준
+# 아카이브 — 배포 전 제품 검증 기준
+
+> 이 문서는 피벗 전 Release Gate의 배포 전 점검 기록이다. Controller 기반 AssetOps MVP는 이미 GIWA Sepolia Test ETH E2E 1건을 마쳤으며, 현재 남은 항목은 owner 브라우저 지갑 수동 검증이다.
 
 ## 한 문장 목적
 

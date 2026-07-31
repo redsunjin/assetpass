@@ -42,3 +42,11 @@
 - Added an operational control room: four-stage release rail, wallet/network/role status, AI-provider settings, and explicit agent responsibility cards.
 - Added local-only Ollama configuration and a user-triggered preflight request that sends only selected scenario metadata; local endpoint validation rejects non-local hosts and no API key field exists in the browser.
 - Verified Ollama model discovery locally. A synthetic local inference request currently returns HTTP 500 because macOS `MTLCompilerService` is unavailable; no restart or service mutation was performed.
+
+## 2026-07-31 · Public-surface quality alignment
+
+- Audited the team introduction, pitch deck, MVP, README, submission brief, current state documents, and publicly reachable pre-pivot diagrams against one product statement: AI proposes; the Controller owner wallet approves; GIWA executes and records the result.
+- Corrected the critical claim mismatch: the controller permits only its owner wallet to register policy and execute payments. The MVP now queries `owner()` on-chain, blocks non-owner accounts before a transaction prompt, and explains the restriction in the UI.
+- Replaced the already-executed default proposal ID with a fresh browser-validation proposal ID so duplicate protection does not appear as an unexplained demo failure.
+- Updated presentation and team materials with the completed CLI Test ETH E2E, while preserving the remaining browser-wallet and scheduled-Watcher limits. Archived the older Release Gate materials with clear status notices.
+- Validation: public-copy style audit is low risk (team page S1/S2 0/0; pitch deck 0/2; MVP 0/0); `scripts/agent-harness.sh` passed with Foundry 6/6. Read-only GIWA RPC verification confirmed the controller owner, allowed payee policy (0.005 Test ETH), and remaining 0.001 Test ETH test balance.

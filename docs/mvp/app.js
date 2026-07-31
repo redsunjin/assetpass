@@ -3,8 +3,8 @@ import { DEFAULT_POLICY, JOURNEY_PHASES, deriveJourney, planTopUp, runAssetWatch
 const config = window.ASSET_PASSPORT_CONFIG;
 const DEMO_BALANCE = 0.0062;
 const MIN_BALANCE = DEFAULT_POLICY.minimumBalanceEth;
-const PROPOSAL = { amountEth: 0.001, recipient: "0x8A45D58f4f9D774A50E33D4C34eEDC1C7aA13E19", id: "gas-topup-20260731-001" };
-const state = { account: null, balance: DEMO_BALANCE, proposal: "pending", policyRegistered: false, aiProvider: localStorage.getItem("asset-passport-ai-provider") || "rules" };
+const PROPOSAL = { amountEth: 0.001, recipient: "0x8A45D58f4f9D774A50E33D4C34eEDC1C7aA13E19", id: "gas-topup-20260731-002" };
+const state = { account: null, controllerOwner: null, balance: DEMO_BALANCE, proposal: "pending", policyRegistered: false, aiProvider: localStorage.getItem("asset-passport-ai-provider") || "rules" };
 const $ = (selector) => document.querySelector(selector);
 const shortAddress = (value) => `${value.slice(0, 6)}…${value.slice(-4)}`;
 const formatEth = (value) => `${Number(value).toFixed(4)} ETH`;
@@ -15,6 +15,8 @@ const CONTROLLER_CALLS = Object.freeze({
   setPayeePolicy: "0x8e20dd4f",
   // payeePolicies(address)
   payeePolicies: "0x2eb172d7",
+  // owner()
+  owner: "0x8da5cb5b",
 });
 
 function word(value) { return String(value).replace(/^0x/, "").padStart(64, "0"); }
@@ -24,6 +26,7 @@ function boolWord(value) { return word(value ? "1" : "0"); }
 function encodeCall(selector, values) { return `${selector}${values.join("")}`; }
 function toWei(eth) { return BigInt(Math.round(Number(eth) * 1e18)); }
 function explorerTxUrl(txHash) { return `${config.chain.blockExplorerUrls[0].replace(/\/$/, "")}/tx/${txHash}`; }
+function isControllerOwner() { return Boolean(state.account && state.controllerOwner && state.account.toLowerCase() === state.controllerOwner.toLowerCase()); }
 async function sha256Hex(value) {
   const bytes = new TextEncoder().encode(value);
   const digest = await crypto.subtle.digest("SHA-256", bytes);
@@ -44,6 +47,7 @@ function currentJourney() {
   return deriveJourney({
     controllerAddress: config.controllerAddress,
     account: state.account,
+    controllerOwner: state.controllerOwner,
     policyRegistered: state.policyRegistered,
     proposalStatus: state.proposal,
   });
@@ -80,7 +84,10 @@ function renderAccount() {
   $("#account-address").textContent = connected ? state.account : "지갑을 연결하면 실제 잔액을 확인합니다";
   $("#settings-account").textContent = connected ? state.account : "연결 전";
   $("#network-name").textContent = connected ? config.chain.chainName : "GIWA Sepolia 확인 전";
-  $("#controller-address").textContent = config.controllerAddress || "테스트넷 배포 전";
+  $("#controller-address").textContent = config.controllerAddress || "연결 전";
+  $("#controller-owner").textContent = state.controllerOwner
+    ? isControllerOwner() ? "현재 연결 지갑" : `승인 지갑 ${shortAddress(state.controllerOwner)}`
+    : "연결 후 조회";
   $("#wallet-balance").textContent = formatEth(state.balance);
   const percent = Math.min(100, Math.round((state.balance / MIN_BALANCE) * 100));
   $("#balance-meter").style.width = `${percent}%`;
@@ -115,7 +122,11 @@ async function connectWallet() {
     state.account = account;
     const hexBalance = await window.ethereum.request({ method: "eth_getBalance", params: [account, "latest"] });
     state.balance = Number(BigInt(hexBalance)) / 1e18;
-    renderAccount(); await refreshOnchainPolicy(); renderProposal(); setResult("#proposal-result", "GIWA Sepolia 지갑을 연결했습니다. 실제 잔액과 온체인 정책을 다시 점검할 수 있습니다.", "success");
+    await refreshControllerOwner();
+    renderAccount(); await refreshOnchainPolicy(); renderProposal();
+    setResult("#proposal-result", isControllerOwner()
+      ? "GIWA Sepolia 승인 지갑을 연결했습니다. 실제 잔액과 온체인 정책을 다시 점검할 수 있습니다."
+      : "GIWA Sepolia 지갑을 연결했습니다. 이 컨트랙트는 등록된 승인 지갑만 정책 등록과 거래 실행을 할 수 있습니다.", "success");
   } catch (error) { setResult("#proposal-result", `지갑 연결을 완료하지 못했습니다: ${error.message || error}`, "error"); }
 }
 function runWatcher() {
@@ -177,17 +188,29 @@ async function refreshOnchainPolicy() {
     const result = await window.ethereum.request({ method: "eth_call", params: [{ to: config.controllerAddress, data }, "latest"] });
     const allowed = BigInt(`0x${result.slice(2, 66)}`) === 1n;
     const maxAmount = BigInt(`0x${result.slice(66, 130)}`);
-    state.policyRegistered = allowed;
-    $("#policy-contract-state").textContent = allowed ? `등록됨 · ${formatEth(Number(maxAmount) / 1e18)}` : "수신 계정 등록 필요";
+    state.policyRegistered = allowed && isControllerOwner();
+    $("#policy-contract-state").textContent = !allowed ? "수신 계정 등록 필요"
+      : !isControllerOwner() ? "등록됨 · 승인 지갑 연결 필요"
+      : `등록됨 · ${formatEth(Number(maxAmount) / 1e18)}`;
   } catch {
     state.policyRegistered = false;
     $("#policy-contract-state").textContent = "온체인 정책 조회 실패";
   }
   renderProposal();
 }
+async function refreshControllerOwner() {
+  if (!config.controllerAddress || !window.ethereum) { state.controllerOwner = null; return; }
+  try {
+    const result = await window.ethereum.request({ method: "eth_call", params: [{ to: config.controllerAddress, data: CONTROLLER_CALLS.owner }, "latest"] });
+    state.controllerOwner = `0x${result.slice(-40)}`;
+  } catch {
+    state.controllerOwner = null;
+  }
+}
 async function registerPolicy() {
   if (!state.account) { await connectWallet(); if (!state.account) return; }
   if (!config.controllerAddress) { setResult("#policy-result", "실행 컨트랙트를 GIWA Sepolia에 배포·연결한 뒤 정책을 등록할 수 있습니다.", "error"); return; }
+  if (!isControllerOwner()) { setResult("#policy-result", "등록된 Controller owner 지갑으로 바꾼 뒤 정책을 등록하세요.", "error"); return; }
   const data = encodeCall(CONTROLLER_CALLS.setPayeePolicy, [addressWord(PROPOSAL.recipient), boolWord(true), uintWord(toWei(DEFAULT_POLICY.maxPaymentEth))]);
   try {
     setResult("#policy-result", "지갑에서 수신 계정과 0.005 Test ETH 한도를 확인하세요.");
@@ -201,9 +224,10 @@ async function registerPolicy() {
 async function approveProposal() {
   if (!state.account) { await connectWallet(); if (!state.account) return; }
   if (!config.controllerAddress) {
-    setResult("#proposal-result", "실행 컨트랙트가 아직 배포·연결되지 않았습니다. 이 데모는 거래안·정책 검사까지 제공하며, 실제 자금 실행은 테스트넷 배포 뒤에만 열립니다.", "error");
+    setResult("#proposal-result", "이 화면에서 실행 컨트랙트 주소를 찾지 못했습니다. 주소를 확인하기 전에는 거래를 실행하지 않습니다.", "error");
     return;
   }
+  if (!isControllerOwner()) { setResult("#proposal-result", "등록된 Controller owner 지갑만 이 거래를 실행할 수 있습니다. 지갑 계정을 확인하세요.", "error"); return; }
   const finding = runAssetWatcher({ balanceEth: state.balance });
   const planned = planTopUp({ finding, recipient: PROPOSAL.recipient, amountEth: PROPOSAL.amountEth, id: PROPOSAL.id });
   if (planned.status !== "ready-for-human") { setResult("#proposal-result", "현재 제안은 정책 검사를 통과하지 않아 실행하지 않았습니다.", "error"); return; }
@@ -260,6 +284,10 @@ function initialize() {
   $("#approve-proposal").addEventListener("click", () => currentJourney().action === "proposal" ? approveProposal() : handleJourneyAction());
   $("#reject-proposal").addEventListener("click", holdProposal); $("#register-policy").addEventListener("click", registerPolicy); $("#save-ai-settings").addEventListener("click", saveAiSettings); $("#test-ai-connection").addEventListener("click", testAiConnection);
   document.querySelectorAll(".setup-link").forEach((button) => button.addEventListener("click", () => openSetup(button.dataset.setup)));
-  window.ethereum?.on?.("accountsChanged", ([account]) => { state.account = account || null; renderAccount(); refreshOnchainPolicy(); renderProposal(); });
+  window.ethereum?.on?.("accountsChanged", async ([account]) => {
+    state.account = account || null;
+    await refreshControllerOwner();
+    renderAccount(); await refreshOnchainPolicy(); renderProposal();
+  });
 }
 initialize();

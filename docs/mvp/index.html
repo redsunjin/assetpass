@@ -24,15 +24,15 @@
       </nav>
 
       <aside class="notice">
-        <strong>이 화면은 가상 자금과 고정 정책을 쓰는 테스트넷 데모입니다.</strong> AI와 규칙 엔진은 거래안을 만들 뿐, 개인키나 송금 권한은 갖지 않습니다. 최종 실행은 연결한 지갑 소유자만 합니다.
+        <strong>이 화면은 가상 자금과 고정 정책을 쓰는 테스트넷 데모입니다.</strong> AI와 규칙 엔진은 거래안을 만들 뿐, 개인키나 송금 권한은 갖지 않습니다. 최종 실행은 Controller owner 지갑만 합니다.
       </aside>
 
       <section class="operations-only hero" aria-labelledby="hero-title">
         <div>
           <p class="eyebrow">현재 상태</p>
-          <p id="hero-state" class="state waiting">테스트넷 준비 필요</p>
-          <h2 id="hero-title">테스트넷 실행을 열기 전입니다.</h2>
-          <p id="hero-copy">잔액 부족을 감지해 보충 거래안을 만들 수 있지만, 실행 컨트랙트가 배포되기 전에는 어떤 지갑 송금도 열리지 않습니다.</p>
+          <p id="hero-state" class="state waiting">자산 계정 연결 필요</p>
+          <h2 id="hero-title">자산 계정을 먼저 연결하세요.</h2>
+          <p id="hero-copy">연결한 지갑이 Controller owner인지 확인한 뒤에만 온체인 정책과 거래안을 검토합니다.</p>
           <p class="hero-goal">목표: 사람이 승인하지 않은 거래는 실행되지 않도록 한다.</p>
           <div class="hero-actions">
             <button id="hero-primary-action" class="button primary" type="button">준비 사항 보기</button>
@@ -86,8 +86,8 @@
       </section>
 
       <section id="onboarding" class="operations-only onboarding panel" aria-labelledby="onboarding-title">
-        <div><p class="eyebrow">처음 한 번만</p><h2 id="onboarding-title">실행을 열기 전 준비</h2><p class="muted">컨트랙트·자산 계정·통제 정책을 먼저 확인합니다. AI 공급자 설정은 선택 사항이며 송금 권한과 무관합니다.</p></div>
-        <ol><li><span>01</span><div><strong>실행 컨트랙트 확인</strong><small>GIWA Sepolia 배포 주소가 연결돼야 실제 실행이 열립니다.</small></div><button class="text-button setup-link" data-setup="deployment" type="button">확인</button></li><li><span>02</span><div><strong>자산 계정·통제 정책</strong><small>지갑 연결 뒤 수신 계정과 건당 한도를 등록합니다.</small></div><button class="text-button setup-link" data-setup="policy" type="button">설정</button></li><li><span>03</span><div><strong>AI 공급자 선택</strong><small>규칙 결과를 설명할 로컬/릴레이 LLM은 필요할 때만 연결합니다.</small></div><button class="text-button setup-link" data-setup="ai" type="button">선택</button></li></ol>
+        <div><p class="eyebrow">처음 한 번만</p><h2 id="onboarding-title">실행을 열기 전 준비</h2><p class="muted">컨트랙트·승인 지갑·통제 정책을 먼저 확인합니다. AI 공급자 설정은 선택 사항이며 송금 권한과 무관합니다.</p></div>
+        <ol><li><span>01</span><div><strong>실행 컨트랙트 확인</strong><small>GIWA Sepolia 배포 주소가 연결돼 있습니다. 실행은 owner 지갑만 열립니다.</small></div><button class="text-button setup-link" data-setup="deployment" type="button">확인</button></li><li><span>02</span><div><strong>승인 지갑·통제 정책</strong><small>owner 지갑으로 수신 계정과 건당 한도를 등록합니다.</small></div><button class="text-button setup-link" data-setup="policy" type="button">설정</button></li><li><span>03</span><div><strong>AI 공급자 선택</strong><small>규칙 결과를 설명할 로컬/릴레이 LLM은 필요할 때만 연결합니다.</small></div><button class="text-button setup-link" data-setup="ai" type="button">선택</button></li></ol>
       </section>
 
       <details class="operations-only agent-details panel">
@@ -102,15 +102,15 @@
       <section class="settings-only settings-grid" aria-label="Asset Passport 설정">
         <article class="panel">
           <p class="eyebrow">Account & network</p><h2>자산 계정과 GIWA</h2>
-          <dl class="settings-list"><div><dt>연결 지갑</dt><dd id="settings-account">연결 전</dd></div><div><dt>네트워크</dt><dd id="network-name">GIWA Sepolia 확인 전</dd></div><div><dt>실행 컨트랙트</dt><dd id="controller-address" class="address">테스트넷 배포 전</dd></div></dl>
+          <dl class="settings-list"><div><dt>연결 지갑</dt><dd id="settings-account">연결 전</dd></div><div><dt>네트워크</dt><dd id="network-name">GIWA Sepolia 확인 전</dd></div><div><dt>실행 컨트랙트</dt><dd id="controller-address" class="address">연결 후 확인</dd></div><div><dt>실행 승인 지갑</dt><dd id="controller-owner" class="address">연결 후 조회</dd></div></dl>
           <button id="settings-wallet-button" class="button secondary" type="button">지갑 연결 및 네트워크 확인</button>
           <p class="muted">개인키·복구 구문은 입력받지 않습니다. MVP에서는 테스트 자금만 사용합니다.</p>
         </article>
         <article id="policy-settings" class="panel">
           <p class="eyebrow">Policy guard</p><h2><svg class="inline-icon"><use href="assets/assetops-icons.svg#policy"></use></svg>사람이 정한 실행 규칙</h2>
-          <dl class="settings-list"><div><dt>건당 한도</dt><dd>0.005 Test ETH</dd></div><div><dt>승인된 수신 계정</dt><dd>보충 계정 1개</dd></div><div><dt>온체인 정책</dt><dd id="policy-contract-state">테스트넷 배포 전</dd></div><div><dt>자동 실행</dt><dd>사용 안 함</dd></div><div><dt>검사 주기</dt><dd>매일 09:00 · 실제 스케줄러 연결 전</dd></div></dl>
+          <dl class="settings-list"><div><dt>건당 한도</dt><dd>0.005 Test ETH</dd></div><div><dt>승인된 수신 계정</dt><dd>보충 계정 1개</dd></div><div><dt>온체인 정책</dt><dd id="policy-contract-state">연결 후 조회</dd></div><div><dt>자동 실행</dt><dd>사용 안 함</dd></div><div><dt>검사 주기</dt><dd>매일 09:00 · 실제 스케줄러 연결 전</dd></div></dl>
           <button id="register-policy" class="button secondary" type="button">지갑으로 정책 등록</button>
-          <p id="policy-result" class="result" aria-live="polite">배포 뒤, 컨트랙트 소유자 지갑이 수신 계정과 한도를 한 번 등록합니다.</p>
+          <p id="policy-result" class="result" aria-live="polite">Controller owner 지갑이 수신 계정과 한도를 등록합니다.</p>
           <p class="muted">정책 검사는 LLM이 아니라 결정적 규칙 엔진이 수행합니다. 서비스 환경에서는 서버 스케줄러가 Watcher를 호출합니다.</p>
         </article>
         <article id="ai-settings" class="panel ai-settings">

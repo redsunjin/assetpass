@@ -15,7 +15,7 @@ export const DEFAULT_POLICY = Object.freeze({
  */
 export const JOURNEY_PHASES = Object.freeze(["prepare", "connect", "review", "execute", "receipt"]);
 
-export function deriveJourney({ controllerAddress, account, policyRegistered, proposalStatus }) {
+export function deriveJourney({ controllerAddress, account, controllerOwner, policyRegistered, proposalStatus }) {
   if (!controllerAddress) return {
     id: "not-deployed", phase: "prepare", stateLabel: "테스트넷 준비 필요", title: "테스트넷 실행을 열기 전입니다.",
     copy: "잔액 부족을 감지해 보충 거래안을 만들 수 있지만, 실행 컨트랙트가 배포되기 전에는 어떤 지갑 송금도 열리지 않습니다.",
@@ -25,6 +25,11 @@ export function deriveJourney({ controllerAddress, account, policyRegistered, pr
     id: "setup-required", phase: "connect", stateLabel: "자산 계정 연결 필요", title: "자산 계정을 먼저 연결하세요.",
     copy: "연결한 지갑의 GIWA 잔액과 정책을 확인한 뒤에만 거래안을 검토할 수 있습니다.",
     primaryLabel: "지갑 연결하기", action: "wallet", setupRequired: true,
+  };
+  if (controllerOwner && account.toLowerCase() !== controllerOwner.toLowerCase()) return {
+    id: "owner-required", phase: "connect", stateLabel: "실행 승인 지갑 필요", title: "등록된 승인 지갑을 연결하세요.",
+    copy: "이 컨트랙트는 배포 owner 지갑만 정책 등록과 결제를 실행할 수 있습니다.",
+    primaryLabel: "지갑 계정 바꾸기", action: "wallet", setupRequired: true,
   };
   if (!policyRegistered) return {
     id: "setup-required", phase: "connect", stateLabel: "통제 정책 등록 필요", title: "실행 전 통제 정책을 등록하세요.",
