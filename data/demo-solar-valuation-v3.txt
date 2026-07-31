@@ -1,0 +1,7 @@
+ASSET PASSPORT DEMO DISCLOSURE PACKET
+Asset: Demo Solar Revenue Right A
+Document: Valuation Report
+Version: v3
+Valuation date: 2026-07-31
+Status: Pending human review
+This is fictional demonstration content only.

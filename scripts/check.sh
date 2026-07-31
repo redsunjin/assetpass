@@ -35,6 +35,7 @@ rg -q "투자 권유" README.md docs/product-spec.md docs/gasok-application-brie
 node scripts/contract-static-check.mjs
 node --check app/app.js
 node scripts/ui-static-check.mjs
+node scripts/sync-public-demo.mjs --check
 test -f .env.example
 test -f contracts/script/DeployAssetRegistry.s.sol
 test -f contracts/script/InitializeDemoAssets.s.sol

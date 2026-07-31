@@ -30,26 +30,25 @@
     <main>
       <div class="eyebrow">GIWA GASOK · 팀 소개</div>
       <h1>AssetPass</h1>
-      <p class="lead">AssetPass는 Sunjin Jo가 운영하는 1인 프로젝트입니다. <strong>Asset Passport</strong>는 GIWA에 문서 해시, 검토 승인, 공시 상태를 남겨 토큰화 자산의 최신 운영 기록을 확인하게 하는 증빙 도구입니다.</p>
+      <p class="lead">AssetPass는 Sunjin Jo가 운영하는 1인 프로젝트입니다. <strong>Asset Passport</strong>는 AI가 공시 위험을 먼저 찾고, 사람이 승인한 최신 공개 상태만 GIWA에 증명하는 RWA Release Gate입니다.</p>
 
       <h2>우리가 풀려는 문제</h2>
       <section class="card">
-        <p>토큰화 자산은 토큰만으로 신뢰를 얻지 못합니다. 실제 운영에서는 문서가 바뀌고 검토가 늦어지며 공시 상태도 달라집니다. 누가 무엇을 확인했고 지금 어떤 상태인지 다시 찾아야 하는 일이 반복됩니다. Asset Passport는 원본 문서를 체인에 올리지 않습니다. 문서 해시와 승인·상태 이력만 기록해, 나중에 문서와 운영 상태를 대조할 수 있게 합니다.</p>
+        <p>토큰화 자산은 토큰만으로 신뢰를 얻지 못합니다. 공시 직전 문서가 바뀌고, 승인 이력이 이전 버전에 묶여 있는 순간이 가장 위험합니다. Asset Passport는 AI가 그 불일치와 다음 행동을 먼저 제안하고, 책임자가 원문 근거를 보고 지갑으로 승인하게 합니다. 원본 문서는 체인에 올리지 않고, 문서 해시와 사람의 승인·상태 이력만 기록합니다.</p>
       </section>
 
       <h2>만든 것과 남은 일</h2>
       <section class="card">
-        <p>프로젝트는 아직 초기 MVP입니다. AssetRegistry 스마트컨트랙트와 테스트, 자산 목록·상세 화면, 문서 해시·공시 일정 화면, EVM 지갑 연결과 서명 미리보기까지 만들었습니다. 이제 GIWA Sepolia에 배포한 뒤 가상 자산 3건의 등록·검토·공시 흐름을 실제 트랜잭션으로 확인하려 합니다.</p>
+        <p>프로젝트는 아직 초기 MVP입니다. AssetRegistry 스마트컨트랙트와 테스트, AI의 위험 제안, 파일 SHA-256 직접 대조, 사람의 EVM 지갑 서명 미리보기까지 구현했습니다. 이제 GIWA Sepolia에 배포한 뒤 공시 차단 → 검토 승인 → 공시 전환 → 외부 검증의 실제 트랜잭션을 확인하려 합니다.</p>
       </section>
 
       <h2>한눈에 보는 흐름</h2>
       <section class="visual-grid" aria-label="Asset Passport 시각 자료">
-        <a class="visual-card" href="asset-passport-workflow.html">
-          <div class="visual-copy"><strong>작동 순서도 보기</strong><p>문서 준비부터 지갑 검토, 공시, 공개 검증까지의 역할별 흐름을 정리했습니다.</p></div>
+        <a class="visual-card" href="ai-release-gate-workflow.html">
+          <div class="visual-copy"><strong>AI Release Gate 순서도 보기</strong><p>AI 제안 → 사람의 책임 있는 승인 → GIWA 공개 증명 → 외부 검증의 흐름을 정리했습니다.</p></div>
         </a>
         <a class="visual-card" href="mvp/">
-          <img src="media/asset-passport-mvp.png" alt="Asset Passport MVP 화면 캡처" />
-          <div class="visual-copy"><strong>MVP 화면 보기</strong><p>가상 자산 3건, 문서 해시, 검토 상태, 공시 일정, 지갑 서명 미리보기 화면입니다.</p></div>
+          <div class="visual-copy"><strong>작동하는 데모 보기</strong><p>AI 공시 차단, 버전 불일치 근거, 파일 해시 대조, 지갑 승인 흐름을 직접 확인할 수 있습니다.</p></div>
         </a>
       </section>
 

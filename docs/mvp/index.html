@@ -3,51 +3,89 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Asset Passport demo-only RWA evidence registry" />
-    <title>Asset Passport — 검증 시나리오 데모</title>
+    <meta name="description" content="Asset Passport AI Release Gate demonstration" />
+    <title>Asset Passport — AI Release Gate</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <main class="shell">
       <header>
         <div>
-          <p class="eyebrow">GIWA Sepolia · 배포 전 제품 검증</p>
-          <h1>Asset Passport</h1>
-          <p class="subtitle">토큰화 자산의 “최신 문서·검토자·공시 상태”를 한 화면에서 확인하는 증빙 기록입니다.</p>
+          <p class="eyebrow">GIWA Sepolia · AI Release Copilot · Demo only</p>
+          <h1>Asset Passport<br /><span>Release Gate</span></h1>
+          <p class="subtitle">AI가 공시 전 누락·버전 위험을 먼저 찾아내고, 사람이 승인한 공개 준비 상태만 GIWA에 증명합니다.</p>
         </div>
         <button id="wallet-button" class="wallet-button" type="button">지갑 연결</button>
       </header>
 
       <aside class="notice" role="note">
-        <strong>현재 상태: 배포 전 검증 설계</strong><br />
-        아래 자산은 모두 가상 시나리오입니다. 화면은 실제 체인 기록이 아니라 배포 뒤 검증할 순서를 보여 줍니다. 원본 문서·개인정보·실물자산 정보·자금은 기록하거나 다루지 않습니다.
+        <strong>가상 자산으로 만든 작동 시연입니다.</strong> AI는 공시 위험과 다음 행동을 제안할 뿐, 법률 판단·자동 승인·자동 공시를 하지 않습니다. 최종 결정은 책임자의 지갑 승인으로만 이뤄지며 원본 문서는 GIWA에 기록하지 않습니다.
       </aside>
 
-      <section class="proof-grid" aria-label="제품이 답하는 질문">
-        <article class="proof-card"><span class="proof-number">01</span><h2>무엇이 최신 문서인가?</h2><p>문서 버전과 SHA-256 해시를 남겨 같은 파일인지 비교합니다.</p></article>
-        <article class="proof-card"><span class="proof-number">02</span><h2>누가 검토했는가?</h2><p>검토자 주소와 승인 결과는 상태 변경 이벤트로 확인합니다.</p></article>
-        <article class="proof-card"><span class="proof-number">03</span><h2>공시할 수 있는 상태인가?</h2><p>승인되지 않은 문서는 공시 상태로 전환할 수 없게 제한합니다.</p></article>
+      <section class="gate-hero" aria-labelledby="gate-title">
+        <div class="gate-label">공개 준비 상태</div>
+        <div class="gate-copy">
+          <p id="gate-state" class="gate-state">점검 중</p>
+          <h2 id="gate-title">AI Release Copilot이 증빙을 확인하고 있습니다.</h2>
+          <p id="gate-reason">시나리오를 선택하면 공시가 가능한지와 근거를 보여 줍니다.</p>
+        </div>
+        <div class="gate-metric"><span>해결할 항목</span><strong id="issue-count">–</strong></div>
       </section>
 
-      <section class="summary" aria-label="데모 요약">
-        <div><span>검증 자산</span><strong id="asset-count">–</strong></div>
-        <div><span>검토 진행 시나리오</span><strong id="review-count">–</strong></div>
-        <div><span>공시 전 차단 검증</span><strong id="blocked-count">–</strong></div>
+      <section class="control-room" aria-labelledby="control-room-title">
+        <div class="control-room-heading">
+          <div><p class="eyebrow">Manager control room</p><h2 id="control-room-title">운영자가 한 화면에서 상황을 판단합니다.</h2></div>
+          <p>AI는 제안하고, 사람은 결정하며, GIWA는 결정된 사실을 증명합니다.</p>
+        </div>
+        <ol class="operation-rail" aria-label="공개 운영 절차">
+          <li class="active"><span>01</span><strong>AI 사전 점검</strong><small id="rail-ai">위험 확인 대기</small></li>
+          <li><span>02</span><strong>책임자 승인</strong><small id="rail-human">지갑 검토 대기</small></li>
+          <li><span>03</span><strong>GIWA 공개 증명</strong><small id="rail-giwa">승인 뒤 기록</small></li>
+          <li><span>04</span><strong>외부 검증</strong><small id="rail-public">Passport 공유 대기</small></li>
+        </ol>
+        <div class="control-grid">
+          <section class="control-card wallet-control" aria-labelledby="wallet-control-title">
+            <div class="card-title"><div><span class="eyebrow">Wallet & roles</span><h3 id="wallet-control-title">지갑과 책임 역할</h3></div><span id="wallet-state" class="control-state">연결 전</span></div>
+            <dl class="manager-list"><div><dt>운영 지갑</dt><dd id="wallet-account">연결하면 표시됩니다</dd></div><div><dt>네트워크</dt><dd id="wallet-network">GIWA Sepolia 확인 전</dd></div><div><dt>승인 역할</dt><dd>발행자 · 검토자 · 감사자</dd></div></dl>
+            <button id="manager-wallet-button" class="secondary-button" type="button">지갑 연결 및 네트워크 확인</button>
+            <p class="card-note">실제 역할 주소는 배포 뒤 컨트랙트에서 대조합니다. 개인키·복구 구문은 이 화면에 입력하지 않습니다.</p>
+          </section>
+
+          <section class="control-card ai-control" aria-labelledby="ai-control-title">
+            <div class="card-title"><div><span class="eyebrow">AI provider & agents</span><h3 id="ai-control-title">AI 제공 방식과 에이전트 관리</h3></div><span id="ai-state" class="control-state">규칙 엔진</span></div>
+            <div class="field-grid"><label>분석 방식<select id="ai-provider"><option value="rules">내장 증빙 규칙 엔진</option><option value="ollama">로컬 LLM · Ollama</option><option value="managed" disabled>제공형 AI · 보안 릴레이 필요</option></select></label><label>로컬 주소<input id="ai-endpoint" type="url" inputmode="url" value="http://127.0.0.1:11434" /></label><label>모델 이름<input id="ai-model" type="text" placeholder="예: llama3.2:3b" /></label></div>
+            <div class="button-row"><button id="save-ai-settings" class="secondary-button" type="button">이 브라우저에 저장</button><button id="test-ai-connection" class="secondary-button" type="button">로컬 연결 확인</button><button id="run-ai-preflight" class="primary-button" type="button">AI 사전 점검 실행</button></div>
+            <div id="ai-run-result" class="agent-result" aria-live="polite">현재는 내장 증빙 규칙이 선택되어 있습니다. 원본 파일은 전송하지 않고, 화면의 메타데이터·버전·승인 상태만 점검합니다.</div>
+            <p class="card-note">로컬 LLM은 이 기기에서 실행 중인 Ollama에만 연결합니다. 외부 AI는 API 키를 브라우저에 넣지 않으며, 별도 보안 릴레이를 만든 뒤에만 활성화합니다.</p>
+          </section>
+
+          <section class="control-card agents-control" aria-labelledby="agents-control-title">
+            <div class="card-title"><div><span class="eyebrow">Agent roster</span><h3 id="agents-control-title">에이전트별 책임 범위</h3></div><span class="control-state ready">3개 역할</span></div>
+            <ul class="agent-roster"><li><span class="agent-dot active"></span><div><strong>Release Scout</strong><small>버전·누락 증빙·승인 연결 탐지</small></div><em>제안만</em></li><li><span class="agent-dot active"></span><div><strong>Disclosure Explainer</strong><small>관리자가 읽는 차단 사유·다음 행동 생성</small></div><em>제안만</em></li><li><span class="agent-dot active"></span><div><strong>Verification Guard</strong><small>파일 SHA-256과 온체인 이력 대조</small></div><em>검증</em></li></ul>
+            <p class="card-note">세 에이전트 모두 승인권이 없습니다. 승인과 공시는 지갑 권한을 가진 사람이 실행합니다.</p>
+          </section>
+        </div>
       </section>
 
-      <section class="workspace" aria-label="Asset Passport workspace">
-        <div class="panel">
-          <div class="panel-heading"><h2>검증 시나리오</h2><span>선택해서 확인</span></div>
+      <section class="proof-grid" aria-label="Release Gate 구조">
+        <article class="proof-card"><span class="proof-number">01 · AI 제안</span><h2>무엇이 빠졌는지 찾습니다</h2><p>버전, 기준일, 필수 증빙, 이전 승인과의 연결을 비교해 위험과 다음 행동을 제안합니다.</p></article>
+        <article class="proof-card"><span class="proof-number">02 · 사람의 결정</span><h2>책임자가 승인합니다</h2><p>AI는 승인권자가 아닙니다. 검토자와 감사자가 근거를 보고 지갑으로 결정합니다.</p></article>
+        <article class="proof-card"><span class="proof-number">03 · GIWA 증명</span><h2>공개 가능한 상태만 남깁니다</h2><p>승인·상태 전이·문서 해시를 GIWA에서 대조해 외부 검증자가 확인합니다.</p></article>
+      </section>
+
+      <section class="workspace" aria-label="Release Gate workspace">
+        <div class="panel scenario-panel">
+          <div class="panel-heading"><h2>공시 시나리오</h2><span>하나의 실패에서 시작</span></div>
           <div id="asset-list" class="asset-list" aria-live="polite"></div>
         </div>
         <article id="asset-detail" class="panel detail" aria-live="polite">
-          <p class="empty-state">시나리오를 선택하면 실제로 무엇을 검증하는지 확인할 수 있습니다.</p>
+          <p class="empty-state">시나리오를 선택하면 AI 제안, 사람의 승인, GIWA 증명을 순서대로 확인할 수 있습니다.</p>
         </article>
       </section>
 
       <section class="boundary" aria-label="기록 경계">
-        <div><span class="eyebrow">ON GIWA</span><strong>식별자 · 문서 해시 · 버전 · 검토 결과 · 상태 이력</strong></div>
-        <div><span class="eyebrow">OFF GIWA</span><strong>원본 문서 · 개인정보 · 실물자산 정보 · 자금</strong></div>
+        <div><span class="eyebrow">ON GIWA</span><strong>자산 식별자 · 문서 해시 · 버전 · 사람의 승인 · 상태 이력</strong></div>
+        <div><span class="eyebrow">OFF GIWA</span><strong>원본 문서 · 개인정보 · 실물자산 정보 · 법률 판단 · 자금</strong></div>
       </section>
     </main>
     <template id="asset-template">
@@ -55,7 +93,7 @@
         <span class="asset-id"></span><strong></strong><span class="status"></span><small></small>
       </button>
     </template>
-    <script src="config.js"></script>
+    <script>window.ASSET_PASSPORT_DATA_URL = "demo-assets.json"; window.ASSET_PASSPORT_SAMPLE_BASE = "./";</script><script src="config.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

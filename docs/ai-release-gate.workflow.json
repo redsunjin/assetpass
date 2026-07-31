@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Asset Passport AI Release Gate",
+    "subtitle": "AI proposes · human approves · GIWA proves",
+    "output": "docs/ai-release-gate-workflow.html"
+  },
+  "lanes": [
+    { "id": "issuer", "label": "발행자" },
+    { "id": "ai", "label": "AI Release Copilot" },
+    { "id": "human", "label": "검토자 · 감사자" },
+    { "id": "giwa", "label": "GIWA Asset Registry" },
+    { "id": "public", "label": "외부 검증자" }
+  ],
+  "phases": [
+    { "id": "prepare", "label": "01 · 준비", "fromCol": 0, "toCol": 1 },
+    { "id": "approve", "label": "02 · 책임 있는 승인", "fromCol": 2, "toCol": 3, "variant": "security" },
+    { "id": "prove", "label": "03 · 공개 증명", "fromCol": 4, "toCol": 5, "variant": "emphasis" }
+  ],
+  "groups": [
+    { "id": "ai_guard", "label": "AI는 위험과 다음 행동만 제안", "lane": "ai", "fromCol": 1, "toCol": 2, "variant": "emphasis" },
+    { "id": "human_gate", "label": "사람의 지갑 승인 없이는 통과 불가", "lane": "human", "fromCol": 3, "toCol": 4, "variant": "security" }
+  ],
+  "mainPath": ["submit", "scan", "approve", "record", "verify"],
+  "nodes": [
+    { "id": "submit", "lane": "issuer", "col": 0, "type": "frontend", "label": "공시 자료 준비", "sublabel": "원본은 오프체인" },
+    { "id": "scan", "lane": "ai", "col": 1, "type": "backend", "label": "AI 사전 점검", "sublabel": "버전 · 누락 · 연결", "tag": "위험 제안" },
+    { "id": "approve", "lane": "human", "col": 3, "type": "security", "label": "사람 승인", "sublabel": "근거 검토 · 지갑 서명", "tag": "필수" },
+    { "id": "record", "lane": "giwa", "col": 4, "type": "messagebus", "label": "공개 준비 증명", "sublabel": "해시 · 승인 · 상태", "tag": "on GIWA" },
+    { "id": "verify", "lane": "public", "col": 5, "type": "external", "label": "공개 검증", "sublabel": "파일 해시 · 이벤트 대조" }
+  ],
+  "edges": [
+    { "from": "submit", "to": "scan", "label": "메타데이터", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "drop", "labelSegment": 1 },
+    { "from": "scan", "to": "approve", "label": "위험·근거·다음 행동", "variant": "security", "fromSide": "bottom", "toSide": "top", "route": "drop", "labelSegment": 1 },
+    { "from": "approve", "to": "record", "label": "승인된 최신본만", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "drop", "labelSegment": 1, "labelDy": 12 },
+    { "from": "record", "to": "verify", "label": "Passport 링크", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "drop", "labelSegment": 1, "labelDy": 12 }
+  ],
+  "cards": [
+    { "dot": "rose", "title": "AI의 경계", "items": ["법률 판단을 하지 않음", "자동 승인·자동 공시를 하지 않음", "원본 문서를 GIWA에 기록하지 않음"] },
+    { "dot": "emerald", "title": "검증 결과", "items": ["공시 전 차단 이력", "사람의 승인 지갑", "문서 해시와 GIWA 이벤트"] }
+  ]
+}

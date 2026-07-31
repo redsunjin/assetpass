@@ -23,7 +23,7 @@
       .card p { font-size: 1rem; margin: 0; } .big { font-size: 2.25rem; font-weight: 800; color: #8cd4ff; letter-spacing: -.04em; margin-bottom: 10px; }
       ol { padding-left: 1.2em; max-width: 900px; font-size: clamp(1.1rem, 2.1vw, 1.55rem); line-height: 1.7; color: #d1e0f0; } li + li { margin-top: 12px; }
       .pill { display: inline-block; margin-top: 15px; padding: 9px 13px; border: 1px solid #3b739e; border-radius: 999px; color: #99ddff; font-size: .92rem; }
-      .workflow-frame { width: 100%; height: 510px; margin-top: 8px; border: 1px solid #315b80; border-radius: 18px; background: #0b1828; }
+      .workflow-frame { width: 100%; height: 510px; margin-top: 8px; border: 1px solid #315b80; border-radius: 18px; background: #0b1828; } .demo-frame { width: 100%; height: 460px; margin-top: 18px; border: 1px solid #386086; border-radius: 16px; background: #07101d; }
       footer { position: absolute; bottom: 24px; color: #8196ad; font-size: .82rem; } a { color: #8bd5ff; }
       @media (max-width: 700px) { .grid, .grid.two { grid-template-columns: 1fr; } .slide { padding-top: 72px; padding-bottom: 72px; } .card { min-height: auto; } }
     </style>
@@ -33,7 +33,7 @@
       <div class="wrap">
         <div class="num">GIWA GASOK · Track 01 DeFi / RWA</div>
         <h1>Asset<br><span class="accent">Passport</span></h1>
-        <p>GIWA 위에서 토큰화 자산의 최신 문서·검토·공시 이력을 검증하는 RWA 운영 증빙 서비스</p>
+        <p>AI가 공시 위험을 먼저 찾고, 사람이 승인한 공개 준비 상태만 GIWA에 증명하는 RWA Release Gate</p>
         <span class="pill">by AssetPass</span>
       </div>
       <footer>01 / 08</footer>
@@ -42,11 +42,11 @@
     <section class="slide">
       <div class="wrap">
         <div class="num">Problem</div>
-        <h2>토큰은 있어도,<br>운영의 <span class="accent">신뢰 기록</span>은 흩어져 있습니다.</h2>
+        <h2>공시 직전,<br><span class="accent">최신 증빙이 맞는지</span><br>누가 보장할까요?</h2>
         <div class="grid">
-          <div class="card"><div class="big">문서</div><p>어떤 문서가 최신본인지, 원본이 바뀌지 않았는지 확인이 어렵습니다.</p></div>
-          <div class="card"><div class="big">승인</div><p>누가 어떤 근거로 검토·승인했는지 책임 이력이 분산됩니다.</p></div>
-          <div class="card"><div class="big">공시</div><p>현재 자산의 공개·보류 상태와 예정 일정을 일관되게 보기 어렵습니다.</p></div>
+          <div class="card"><div class="big">최신본</div><p>공시 패키지가 문서 v3를 참조하지만, 승인 이력은 v2에 묶여 있을 수 있습니다.</p></div>
+          <div class="card"><div class="big">책임</div><p>바뀐 근거를 누가 확인해야 하는지 불분명하면 공개 직전에 병목이 생깁니다.</p></div>
+          <div class="card"><div class="big">검증</div><p>파트너와 검증자는 “지금 공개 가능한 상태인가”를 다시 확인할 방법이 필요합니다.</p></div>
         </div>
       </div>
       <footer>02 / 08</footer>
@@ -55,10 +55,11 @@
     <section class="slide">
       <div class="wrap">
         <div class="num">Solution</div>
-        <h2>원본 문서는 밖에 두고,<br><span class="accent">증명 가능한 이력만</span><br>GIWA에 남깁니다.</h2>
-        <div class="grid two">
-          <div class="card"><h3>On-chain evidence</h3><p>자산 ID, 문서 해시·버전, 역할별 검토 승인, 상태 변경, 공시 일정만 기록합니다.</p></div>
-          <div class="card"><h3>Public verification</h3><p>발행자·검토자·감사자·보유자가 지갑 기반으로 최신 운영 상태를 확인합니다.</p></div>
+        <h2><span class="accent">AI 제안</span> 뒤에<br>사람의 승인,<br>그리고 GIWA 증명</h2>
+        <div class="grid">
+          <div class="card"><h3>AI Release Copilot</h3><p>문서 버전·누락 증빙·이전 승인 연결을 비교해 위험과 다음 행동을 제안합니다.</p></div>
+          <div class="card"><h3>Human approval</h3><p>AI는 승인하지 않습니다. 책임자가 원문 근거를 보고 지갑으로 결정합니다.</p></div>
+          <div class="card"><h3>GIWA proof</h3><p>승인된 최신 해시와 상태 전이만 기록해 외부 검증자가 대조합니다.</p></div>
         </div>
       </div>
       <footer>03 / 08</footer>
@@ -67,8 +68,8 @@
     <section class="slide">
       <div class="wrap">
         <div class="num">Product flow</div>
-        <h2>문서 → 검토 → 공시 → 검증</h2>
-        <iframe class="workflow-frame" src="asset-passport-workflow.html" title="Asset Passport 작동 순서도" loading="lazy"></iframe>
+        <h2>공시를 <span class="accent">열기 전</span>에<br>한 번 더 멈춥니다.</h2>
+        <iframe class="workflow-frame" src="ai-release-gate-workflow.html" title="AI Release Gate 작동 순서도" loading="lazy"></iframe>
       </div>
       <footer>04 / 08</footer>
     </section>
@@ -78,9 +79,9 @@
         <div class="num">Why GIWA</div>
         <h2>RWA 운영 증빙에 맞는<br><span class="accent">빠르고 EVM 호환적인</span> 실행 환경</h2>
         <div class="grid">
-          <div class="card"><h3>Low-friction records</h3><p>자주 갱신되는 문서·상태 이력을 부담 없이 기록하는 데 초점을 둡니다.</p></div>
-          <div class="card"><h3>Wallet-native proof</h3><p>표준 EVM 지갑으로 역할별 검토와 공개 검증 경험을 구현합니다.</p></div>
-          <div class="card"><h3>GIWA-native value</h3><p>GIWA Sepolia에서 실제 온체인 흐름을 검증하고 생태계의 RWA 신뢰 레이어로 확장합니다.</p></div>
+          <div class="card"><h3>Shared release truth</h3><p>여러 조직이 같은 최신 공시 준비 상태를 확인하는 공용 증빙 레이어입니다.</p></div>
+          <div class="card"><h3>Wallet-native accountability</h3><p>표준 EVM 지갑으로 “AI 제안”과 “사람의 책임 있는 승인”을 분리합니다.</p></div>
+          <div class="card"><h3>GIWA-native value</h3><p>GIWA Sepolia에서 차단·승인·공개·검증을 실제 이벤트로 이어, 화면 밖에서도 증명합니다.</p></div>
         </div>
       </div>
       <footer>05 / 08</footer>
@@ -89,13 +90,13 @@
     <section class="slide">
       <div class="wrap">
         <div class="num">Working demo & validation</div>
-        <h2>보여 주는 화면이 아니라,<br><span class="accent">검증할 수 있는 흐름</span>을 만듭니다.</h2>
+        <h2>한 번의 <span class="accent">차단</span>과<br>한 번의 승인으로<br>가치를 증명합니다.</h2>
         <div class="grid two">
-          <div class="card"><h3>현재 작동하는 데모</h3><p>문서 해시, 상태 전이, 지갑 연결과 서명 미리보기, 역할별 기록 규칙을 시나리오 화면으로 구현했습니다.</p></div>
-          <div class="card"><h3>배포 뒤 확인할 것</h3><p>등록·검토·공시 이벤트를 GIWA Explorer에서 대조하고, 승인 전 공시 차단과 원본 문서 해시 일치를 재현합니다.</p></div>
+          <div class="card"><h3>현재 작동하는 데모</h3><p>운영 콘솔에서 지갑·역할·AI 제공 방식·에이전트 책임·공개 단계를 구분하고, AI 위험 제안과 파일 SHA-256 대조를 구현했습니다.</p></div>
+          <div class="card"><h3>배포 뒤 확인할 것</h3><p>공시 차단 1회 → 검토 승인 1회 → 공시 전환 1회 → 외부 파일 검증 1회를 GIWA Explorer와 대조합니다.</p></div>
         </div>
-        <p class="sub">완료 기준은 화면·컨트랙트 조회·Explorer 이벤트가 같은 사실을 가리키는 것입니다. AssetPass는 1인 프로젝트이며 AI는 조사·코드 초안·문서 정리의 보조 도구로 활용합니다.</p>
-        <a href="mvp/"><img class="mvp-shot" src="media/asset-passport-mvp.jpg" alt="Asset Passport 검증 시나리오 데모 화면" /></a>
+        <p class="sub">AI는 법률 판단·자동 승인·자동 공시를 하지 않습니다. 완료 기준은 화면·컨트랙트 조회·Explorer 이벤트가 같은 사실을 가리키는 것입니다.</p>
+        <iframe class="demo-frame" src="mvp/" title="Asset Passport AI Release Gate 데모" loading="lazy"></iframe>
       </div>
       <footer>06 / 08</footer>
     </section>
@@ -105,8 +106,8 @@
         <div class="num">Roadmap</div>
         <h2>테스트넷 검증에서<br>실제 운영 <span class="accent">파일럿</span>으로</h2>
         <div class="grid">
-          <div class="card"><h3>Now</h3><p>GIWA Sepolia에서 등록·검토·공시·검증 흐름을 시연합니다.</p></div>
-          <div class="card"><h3>Next</h3><p>RWA 발행·운용 사업자와 문서 증빙 및 공시 운영 파일럿을 설계합니다.</p></div>
+          <div class="card"><h3>Now</h3><p>GIWA Sepolia에서 AI 차단·사람 승인·공개 증명·파일 검증 흐름을 시연합니다.</p></div>
+          <div class="card"><h3>Next</h3><p>RWA 발행·운용 사업자와 실제 문서 비교·검토 큐·공시 운영 파일럿을 설계합니다.</p></div>
           <div class="card"><h3>Later</h3><p>역할 정책, 알림, 감사 리포트, GIWA Wallet 연동 후보로 확장합니다.</p></div>
         </div>
       </div>
@@ -116,8 +117,8 @@
     <section class="slide">
       <div class="wrap">
         <div class="num">Vision</div>
-        <h2>RWA의 신뢰는<br><span class="accent">발행 이후의 운영</span>에서 시작됩니다.</h2>
-        <p>AssetPass는 자산을 사고팔거나 보관하지 않습니다. 자산을 둘러싼 문서·검토·공시의 최신 상태를 누구나 확인할 수 있게 만드는 신뢰 운영 인프라를 만듭니다.</p>
+        <h2>RWA의 신뢰는<br><span class="accent">공개 직전의 책임</span>에서 시작됩니다.</h2>
+        <p>AssetPass는 자산을 사고팔거나 보관하지 않습니다. AI가 운영 리스크를 먼저 드러내고, 사람이 책임 있게 승인한 최신 공개 상태를 누구나 검증하게 만드는 신뢰 운영 인프라를 만듭니다.</p>
         <span class="pill">Asset Passport · GIWA GASOK 2026</span>
       </div>
       <footer>08 / 08 · <a href="mvp/">MVP 데모</a> · <a href="https://github.com/redsunjin/assetpass">github.com/redsunjin/assetpass</a></footer>
