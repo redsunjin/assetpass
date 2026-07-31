@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "Asset Passport 사용자 여정",
+    "subtitle": "AI가 제안하고 · 사람이 승인하고 · GIWA가 공개 준비 상태를 증명한다",
+    "output": "docs/asset-passport-user-journey.html"
+  },
+  "lanes": [
+    { "id": "issuer", "label": "발행자 / 운영자" },
+    { "id": "ai", "label": "AI Release Copilot" },
+    { "id": "reviewer", "label": "검토자" },
+    { "id": "giwa", "label": "GIWA Asset Registry" },
+    { "id": "verifier", "label": "외부 검증자" }
+  ],
+  "phases": [
+    { "id": "prepare", "label": "준비", "fromCol": 0, "toCol": 1 },
+    { "id": "approve", "label": "사람의 결정", "fromCol": 2, "toCol": 3, "variant": "security" },
+    { "id": "prove", "label": "공개 증명", "fromCol": 4, "toCol": 5, "variant": "emphasis" }
+  ],
+  "groups": [
+    { "id": "ai_guard", "label": "AI는 제안만", "lane": "ai", "fromCol": 1, "toCol": 2, "variant": "emphasis" },
+    { "id": "human_gate", "label": "지갑 승인 없이는 차단", "lane": "reviewer", "fromCol": 2, "toCol": 3, "variant": "security" }
+  ],
+  "mainPath": ["package", "scan", "review", "record", "verify"],
+  "nodes": [
+    { "id": "package", "lane": "issuer", "col": 0, "type": "frontend", "label": "공개 묶음", "sublabel": "문서 해시 · 버전", "tag": "오프체인 원본" },
+    { "id": "scan", "lane": "ai", "col": 1, "type": "backend", "label": "AI 점검", "sublabel": "위험 · 근거 · 다음 행동", "tag": "승인권 없음" },
+    { "id": "review", "lane": "reviewer", "col": 3, "type": "security", "label": "지갑 승인", "sublabel": "승인 또는 반려", "tag": "사람의 결정" },
+    { "id": "record", "lane": "giwa", "col": 4, "type": "messagebus", "label": "GIWA 증명", "sublabel": "해시 · 승인 · 상태", "tag": "on GIWA" },
+    { "id": "verify", "lane": "verifier", "col": 5, "type": "external", "label": "공개 검증", "sublabel": "파일 해시 대조" }
+  ],
+  "edges": [
+    { "from": "package", "to": "scan", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "drop" },
+    { "from": "scan", "to": "review", "variant": "security", "fromSide": "bottom", "toSide": "top", "route": "drop", "label": "근거 확인" },
+    { "from": "review", "to": "record", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "drop" },
+    { "from": "record", "to": "verify", "variant": "emphasis", "fromSide": "bottom", "toSide": "top", "route": "drop" }
+  ],
+  "cards": [
+    { "dot": "cyan", "title": "AI의 범위", "items": ["위험과 다음 행동 제안", "원본 문서의 온체인 기록 없음", "자동 승인·공시 없음"] },
+    { "dot": "rose", "title": "토큰의 범위", "items": ["Test ETH는 수수료만", "RWA 토큰 발행·거래 없음", "증명은 이벤트와 해시로 충분"] },
+    { "dot": "emerald", "title": "사용자 가치", "items": ["낡은 승인으로 공시하는 오류 차단", "지갑 책임과 최신본 연결", "외부에서 독립 검증"] }
+  ]
+}
