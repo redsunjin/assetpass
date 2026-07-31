@@ -150,6 +150,9 @@ function updateAiManager(message) {
   const stateEl = document.querySelector("#ai-state");
   stateEl.textContent = local ? "로컬 LLM" : "규칙 엔진";
   stateEl.className = `control-state ${local ? "local" : ""}`;
+  document.querySelector("#ai-supplier").textContent = local ? "Ollama · 이 기기에서 실행" : "내장 증빙 규칙 · LLM 미사용";
+  document.querySelector("#ai-data-scope").textContent = local ? "문서 메타데이터·버전·승인 상태만" : "문서 메타데이터·버전·승인 상태";
+  document.querySelector("#ai-route").textContent = local ? "브라우저 → localhost Ollama" : "브라우저 내부 · 네트워크 전송 없음";
   if (message) document.querySelector("#ai-run-result").textContent = message;
 }
 

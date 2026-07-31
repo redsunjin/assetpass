@@ -32,6 +32,17 @@
         <div class="gate-metric"><span>해결할 항목</span><strong id="issue-count">–</strong></div>
       </section>
 
+      <section class="workflow-guide" aria-labelledby="workflow-guide-title">
+        <div class="workflow-guide-heading"><div><p class="eyebrow">Release workflow</p><h2 id="workflow-guide-title">무엇이 어디서 판단되고, 무엇이 GIWA에 남는가</h2></div><p>원본 문서는 밖에 두고, AI의 제안과 사람의 결정을 분리해 공개 준비 상태를 만듭니다.</p></div>
+        <ol class="workflow-steps">
+          <li><span>01</span><div><strong>자료 등록</strong><p>발행자가 원본을 오프체인에 보관하고 문서 해시·버전만 등록합니다.</p><small>입력: 문서 메타데이터</small></div></li>
+          <li><span>02</span><div><strong>AI 사전 점검</strong><p>공급된 LLM 또는 규칙 엔진이 버전·누락·승인 연결을 살펴봅니다.</p><small>출력: 위험과 다음 행동</small></div></li>
+          <li><span>03</span><div><strong>사람의 승인</strong><p>검토자가 원문 근거를 확인하고 책임 있는 결정을 내립니다.</p><small>행동: 지갑 서명</small></div></li>
+          <li><span>04</span><div><strong>GIWA 증명</strong><p>승인된 최신본의 해시·승인·상태 전이만 온체인에 기록합니다.</p><small>증명: 트랜잭션 이벤트</small></div></li>
+          <li><span>05</span><div><strong>공개 검증</strong><p>파트너와 검증자가 파일 해시와 GIWA 이력을 직접 대조합니다.</p><small>결과: 공유 가능한 Passport</small></div></li>
+        </ol>
+      </section>
+
       <section class="control-room" aria-labelledby="control-room-title">
         <div class="control-room-heading">
           <div><p class="eyebrow">Manager control room</p><h2 id="control-room-title">운영자가 한 화면에서 상황을 판단합니다.</h2></div>
@@ -52,7 +63,8 @@
           </section>
 
           <section class="control-card ai-control" aria-labelledby="ai-control-title">
-            <div class="card-title"><div><span class="eyebrow">AI provider & agents</span><h3 id="ai-control-title">AI 제공 방식과 에이전트 관리</h3></div><span id="ai-state" class="control-state">규칙 엔진</span></div>
+            <div class="card-title"><div><span class="eyebrow">AI supplier & agents</span><h3 id="ai-control-title">AI 공급 정보와 에이전트 관리</h3></div><span id="ai-state" class="control-state">규칙 엔진</span></div>
+            <dl class="supplier-list"><div><dt>현재 공급자</dt><dd id="ai-supplier">내장 증빙 규칙 · LLM 미사용</dd></div><div><dt>AI가 받는 정보</dt><dd id="ai-data-scope">문서 메타데이터·버전·승인 상태</dd></div><div><dt>데이터 경로</dt><dd id="ai-route">브라우저 내부 · 네트워크 전송 없음</dd></div><div><dt>외부 제공형 LLM</dt><dd>미연결 · 서버 보안 릴레이를 준비한 뒤 선택</dd></div></dl>
             <div class="field-grid"><label>분석 방식<select id="ai-provider"><option value="rules">내장 증빙 규칙 엔진</option><option value="ollama">로컬 LLM · Ollama</option><option value="managed" disabled>제공형 AI · 보안 릴레이 필요</option></select></label><label>로컬 주소<input id="ai-endpoint" type="url" inputmode="url" value="http://127.0.0.1:11434" /></label><label>모델 이름<input id="ai-model" type="text" placeholder="예: llama3.2:3b" /></label></div>
             <div class="button-row"><button id="save-ai-settings" class="secondary-button" type="button">이 브라우저에 저장</button><button id="test-ai-connection" class="secondary-button" type="button">로컬 연결 확인</button><button id="run-ai-preflight" class="primary-button" type="button">AI 사전 점검 실행</button></div>
             <div id="ai-run-result" class="agent-result" aria-live="polite">현재는 내장 증빙 규칙이 선택되어 있습니다. 원본 파일은 전송하지 않고, 화면의 메타데이터·버전·승인 상태만 점검합니다.</div>
