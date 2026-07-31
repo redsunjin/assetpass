@@ -1,5 +1,7 @@
 # Asset Passport MVP UX 분석 보고서
 
+> 상태: 보관 문서. 이 문서는 2026-07-31의 Release Gate 방향을 분석한 기록이다. 현재 AssetOps MVP의 기준은 [asset-passport-assetops-spec.md](asset-passport-assetops-spec.md)와 상태 기반 사용자 여정이다.
+
 작성일: 2026-07-31  
 대상: `https://redsunjin.github.io/assetpass/mvp/`
 

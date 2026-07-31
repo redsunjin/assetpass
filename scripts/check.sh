@@ -26,6 +26,7 @@ rg -q "자동 이체" README.md docs/asset-passport-assetops-spec.md
 node scripts/contract-static-check.mjs
 node scripts/agent-contract-check.mjs
 node scripts/agent-engine-test.mjs
+node scripts/journey-state-test.mjs
 node --check app/app.js
 node --check app/agent-engine.mjs
 node scripts/ui-static-check.mjs

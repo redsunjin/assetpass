@@ -1,10 +1,10 @@
-import { DEFAULT_POLICY, planTopUp, runAssetWatcher } from "./agent-engine.mjs";
+import { DEFAULT_POLICY, JOURNEY_PHASES, deriveJourney, planTopUp, runAssetWatcher } from "./agent-engine.mjs";
 
 const config = window.ASSET_PASSPORT_CONFIG;
 const DEMO_BALANCE = 0.0062;
 const MIN_BALANCE = DEFAULT_POLICY.minimumBalanceEth;
 const PROPOSAL = { amountEth: 0.001, recipient: "0x8A45D58f4f9D774A50E33D4C34eEDC1C7aA13E19", id: "gas-topup-20260731-001" };
-const state = { account: null, balance: DEMO_BALANCE, proposal: "pending", aiProvider: localStorage.getItem("asset-passport-ai-provider") || "rules" };
+const state = { account: null, balance: DEMO_BALANCE, proposal: "pending", policyRegistered: false, aiProvider: localStorage.getItem("asset-passport-ai-provider") || "rules" };
 const $ = (selector) => document.querySelector(selector);
 const shortAddress = (value) => `${value.slice(0, 6)}…${value.slice(-4)}`;
 const formatEth = (value) => `${Number(value).toFixed(4)} ETH`;
@@ -40,6 +40,40 @@ function setView(view) {
     tab.classList.toggle("active", active); tab.setAttribute("aria-pressed", String(active));
   });
 }
+function currentJourney() {
+  return deriveJourney({
+    controllerAddress: config.controllerAddress,
+    account: state.account,
+    policyRegistered: state.policyRegistered,
+    proposalStatus: state.proposal,
+  });
+}
+function scrollTo(target, block = "start") {
+  target?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block });
+}
+function renderJourney() {
+  const journey = currentJourney();
+  const phaseIndex = JOURNEY_PHASES.indexOf(journey.phase);
+  $("#hero-state").textContent = journey.stateLabel;
+  $("#hero-state").className = `state ${journey.id === "execution-complete" ? "ready" : journey.action === "watcher" ? "hold" : "waiting"}`;
+  $("#hero-title").textContent = journey.title;
+  $("#hero-copy").textContent = journey.copy;
+  $("#hero-primary-action").textContent = journey.primaryLabel;
+  $("#onboarding").hidden = !journey.setupRequired;
+  document.querySelectorAll("[data-journey-phase]").forEach((step) => {
+    const stepIndex = JOURNEY_PHASES.indexOf(step.dataset.journeyPhase);
+    step.classList.toggle("complete", stepIndex < phaseIndex);
+    step.classList.toggle("current", stepIndex === phaseIndex);
+    step.setAttribute("aria-current", stepIndex === phaseIndex ? "step" : "false");
+  });
+}
+function handleJourneyAction() {
+  const journey = currentJourney();
+  if (journey.action === "proposal") { scrollTo($("#proposal-card"), "center"); return; }
+  if (journey.action === "receipt") { scrollTo($(".receipt"), "center"); return; }
+  if (journey.action === "watcher") { runWatcher(); return; }
+  openSetup(journey.action);
+}
 function renderAccount() {
   const connected = Boolean(state.account);
   $("#wallet-state").textContent = connected ? "연결됨" : "연결 전";
@@ -52,15 +86,22 @@ function renderAccount() {
   $("#balance-meter").style.width = `${percent}%`;
 }
 function renderProposal() {
+  const journey = currentJourney();
   const isPending = state.proposal === "pending";
   const isHeld = state.proposal === "held";
-  $("#proposal-state").textContent = isPending ? "승인 필요" : isHeld ? "보류" : "실행 완료";
-  $("#proposal-state").className = `chip ${isPending ? "warning" : isHeld ? "" : "success"}`;
-  $("#hero-state").textContent = isPending ? "승인 대기" : isHeld ? "보류됨" : "실행 완료";
-  $("#hero-state").className = `state ${isPending ? "waiting" : isHeld ? "hold" : "ready"}`;
+  $("#proposal-state").textContent = journey.stateLabel;
+  $("#proposal-state").className = `chip ${journey.id === "execution-complete" ? "success" : journey.action === "watcher" ? "" : "warning"}`;
   $("#proposal-count").textContent = isPending ? "1" : "0";
-  $("#approve-proposal").disabled = !isPending;
+  $("#approve-proposal").textContent = journey.action === "proposal" ? "내용 확인 후 지갑으로 실행" : journey.primaryLabel;
+  $("#approve-proposal").disabled = false;
+  $("#reject-proposal").hidden = journey.action !== "proposal";
   $("#reject-proposal").disabled = !isPending;
+  const policyReady = Boolean(config.controllerAddress && state.policyRegistered);
+  $("#policy-check-state").textContent = policyReady ? "Policy Guard · 정책 검사 통과" : "Policy Guard · 실행 전 점검";
+  $("#policy-check-detail").textContent = policyReady
+    ? "승인된 수신 계정 · 건당 한도 0.005 ETH 충족"
+    : "컨트랙트 연결과 정책 등록 전에는 온체인 정책을 검증하지 않습니다.";
+  renderJourney();
 }
 async function connectWallet() {
   if (!window.ethereum) { setResult("#proposal-result", "브라우저 지갑을 찾지 못했습니다. MetaMask 등 EVM 지갑이 필요합니다.", "error"); return; }
@@ -74,7 +115,7 @@ async function connectWallet() {
     state.account = account;
     const hexBalance = await window.ethereum.request({ method: "eth_getBalance", params: [account, "latest"] });
     state.balance = Number(BigInt(hexBalance)) / 1e18;
-    renderAccount(); await refreshOnchainPolicy(); setResult("#proposal-result", "GIWA Sepolia 지갑을 연결했습니다. 실제 잔액과 온체인 정책을 다시 점검할 수 있습니다.", "success");
+    renderAccount(); await refreshOnchainPolicy(); renderProposal(); setResult("#proposal-result", "GIWA Sepolia 지갑을 연결했습니다. 실제 잔액과 온체인 정책을 다시 점검할 수 있습니다.", "success");
   } catch (error) { setResult("#proposal-result", `지갑 연결을 완료하지 못했습니다: ${error.message || error}`, "error"); }
 }
 function runWatcher() {
@@ -126,16 +167,23 @@ function renderReceipt(txHash, receipt) {
   $("#proof-status").textContent = receipt?.status === "0x1" ? "GIWA 실행 영수증을 확인했습니다." : "GIWA 거래 제출 후 영수증을 기다립니다.";
 }
 async function refreshOnchainPolicy() {
-  if (!state.account || !config.controllerAddress || !window.ethereum) return;
+  if (!state.account || !config.controllerAddress || !window.ethereum) {
+    state.policyRegistered = false;
+    renderJourney();
+    return;
+  }
   try {
     const data = encodeCall(CONTROLLER_CALLS.payeePolicies, [addressWord(PROPOSAL.recipient)]);
     const result = await window.ethereum.request({ method: "eth_call", params: [{ to: config.controllerAddress, data }, "latest"] });
     const allowed = BigInt(`0x${result.slice(2, 66)}`) === 1n;
     const maxAmount = BigInt(`0x${result.slice(66, 130)}`);
+    state.policyRegistered = allowed;
     $("#policy-contract-state").textContent = allowed ? `등록됨 · ${formatEth(Number(maxAmount) / 1e18)}` : "수신 계정 등록 필요";
   } catch {
+    state.policyRegistered = false;
     $("#policy-contract-state").textContent = "온체인 정책 조회 실패";
   }
+  renderProposal();
 }
 async function registerPolicy() {
   if (!state.account) { await connectWallet(); if (!state.account) return; }
@@ -146,7 +194,7 @@ async function registerPolicy() {
     const txHash = await window.ethereum.request({ method: "eth_sendTransaction", params: [{ from: state.account, to: config.controllerAddress, data }] });
     const receipt = await waitForReceipt(txHash);
     if (receipt?.status === "0x0") throw new Error("정책 등록 거래가 체인에서 실패했습니다.");
-    await refreshOnchainPolicy();
+    await refreshOnchainPolicy(); renderProposal();
     setResult("#policy-result", `정책 등록 거래를 제출했습니다. ${receipt ? "GIWA에서 확인됐습니다." : "Explorer에서 확인하세요."}`, "success");
   } catch (error) { setResult("#policy-result", `정책 등록을 완료하지 못했습니다: ${error.message || error}`, "error"); }
 }
@@ -172,7 +220,6 @@ async function approveProposal() {
 }
 function holdProposal() {
   state.proposal = "held"; renderProposal(); setResult("#proposal-result", "제안을 보류했습니다. 자금은 이동하지 않았고, 다음 Watcher 점검에서 다시 판단합니다.", "success");
-  $("#hero-copy").textContent = "보류된 거래안입니다. 정기 점검에서 자산 상태가 다시 기준 아래인지 확인합니다.";
 }
 function saveAiSettings() {
   const provider = $("#ai-provider").value; const model = $("#ai-model").value.trim(); const endpoint = $("#ai-endpoint").value.trim();
@@ -198,8 +245,8 @@ async function testAiConnection() {
 }
 function openSetup(section) {
   setView("settings");
-  const target = section === "wallet" ? $("#settings-wallet-button") : section === "policy" ? $("#policy-settings") : $("#ai-settings");
-  target?.scrollIntoView({ behavior: "smooth", block: "start" }); target?.focus?.({ preventScroll: true });
+  const target = section === "wallet" ? $("#settings-wallet-button") : section === "policy" ? $("#policy-settings") : section === "deployment" ? $("#controller-address") : $("#ai-settings");
+  scrollTo(target); target?.focus?.({ preventScroll: true });
 }
 function initialize() {
   $("#proposal-amount").textContent = `${PROPOSAL.amountEth.toFixed(4)} Test ETH`;
@@ -209,9 +256,10 @@ function initialize() {
   document.querySelectorAll(".view-tab").forEach((tab) => tab.addEventListener("click", () => setView(tab.dataset.view)));
   ["#wallet-button", "#settings-wallet-button"].forEach((selector) => $(selector).addEventListener("click", connectWallet));
   ["#run-watcher", "#watcher-run"].forEach((selector) => $(selector).addEventListener("click", runWatcher));
-  $("#open-proposal").addEventListener("click", () => $("#proposal-card").scrollIntoView({ behavior: "smooth", block: "center" }));
-  $("#approve-proposal").addEventListener("click", approveProposal); $("#reject-proposal").addEventListener("click", holdProposal); $("#register-policy").addEventListener("click", registerPolicy); $("#save-ai-settings").addEventListener("click", saveAiSettings); $("#test-ai-connection").addEventListener("click", testAiConnection);
+  $("#hero-primary-action").addEventListener("click", handleJourneyAction);
+  $("#approve-proposal").addEventListener("click", () => currentJourney().action === "proposal" ? approveProposal() : handleJourneyAction());
+  $("#reject-proposal").addEventListener("click", holdProposal); $("#register-policy").addEventListener("click", registerPolicy); $("#save-ai-settings").addEventListener("click", saveAiSettings); $("#test-ai-connection").addEventListener("click", testAiConnection);
   document.querySelectorAll(".setup-link").forEach((button) => button.addEventListener("click", () => openSetup(button.dataset.setup)));
-  window.ethereum?.on?.("accountsChanged", ([account]) => { state.account = account || null; renderAccount(); refreshOnchainPolicy(); });
+  window.ethereum?.on?.("accountsChanged", ([account]) => { state.account = account || null; renderAccount(); refreshOnchainPolicy(); renderProposal(); });
 }
 initialize();
