@@ -38,25 +38,25 @@
     <main>
       <div class="eyebrow">GIWA GASOK · 팀 소개</div>
       <h1>AssetPass</h1>
-      <p class="lead">AssetPass는 Sunjin Jo가 운영하는 1인 프로젝트로, AI가 온체인 자산 상태를 점검하고 사람이 승인한 거래만 GIWA에서 실행·증명하는 <span class="product-name">Asset Passport</span>를 만들고 있습니다.</p>
+      <p class="lead">AssetPass는 Sunjin Jo의 1인 프로젝트입니다. <span class="product-name">Asset Passport</span>는 온체인 자산 상태를 점검하고, 사람이 승인한 거래만 GIWA에서 실행하도록 설계한 테스트넷 MVP입니다.</p>
 
       <h2>우리가 풀려는 문제</h2>
       <section class="card">
-        <p>온체인 자산을 운영하는 팀은 지급·정산·수수료 보충을 반복하지만, AI에 개인키를 맡길 수는 없습니다. Asset Passport는 AI가 잔액과 예정 거래를 점검해 실행안을 만들고, 정책 검사와 사람 지갑 승인을 통과한 거래만 GIWA에서 실행하게 합니다.</p>
+        <p>온체인 자산을 운영하는 팀은 지급·정산·수수료 보충을 반복하지만, AI에 개인키를 맡길 수는 없습니다. Asset Passport는 잔액과 예정 거래를 점검해 보충 거래안을 만들고, 미리 정한 수신자와 한도를 통과한 뒤 지갑 소유자가 직접 실행하게 합니다.</p>
       </section>
 
       <h2>만든 것과 남은 일</h2>
       <section class="card">
-        <p>프로젝트는 아직 초기 MVP입니다. 정책 기반 Test ETH 실행 컨트랙트와 테스트, AI 에이전트 역할, 거래 제안, 사람 지갑 연결 화면을 구현했습니다. 다음 단계는 GIWA Sepolia에 배포한 뒤 잔액 점검 → 거래안 → 지갑 실행 → tx hash 영수증을 실제로 연결하는 일입니다.</p>
+        <p>프로젝트는 아직 초기 MVP입니다. 정책 기반 Test ETH 실행 컨트랙트와 테스트, 거래안, 지갑 연결 화면을 구현했습니다. 다음 단계는 GIWA Sepolia에 배포해 잔액 점검부터 지갑 실행, tx hash 영수증까지 한 번의 거래로 확인하는 일입니다.</p>
       </section>
 
       <h2>한눈에 보는 흐름</h2>
       <section class="visual-grid" aria-label="Asset Passport 시각 자료">
         <a class="visual-card" href="mvp/">
-          <div class="visual-copy"><strong>AI AssetOps 흐름 보기</strong><p>정기 점검 → 거래 제안 → 정책 검사 → 사람의 지갑 실행 → GIWA 영수증 흐름을 확인합니다.</p></div>
+          <div class="visual-copy"><strong>자산 통제 흐름 보기</strong><p>자산 점검 → 거래안 → 정책 검사 → 지갑 실행 → GIWA 영수증 흐름을 확인합니다.</p></div>
         </a>
         <a class="visual-card" href="mvp/">
-          <div class="visual-copy"><strong>작동하는 데모 보기</strong><p>자산 계정, AI 에이전트, 거래 제안, 정책 경계와 지갑 승인 흐름을 직접 확인할 수 있습니다.</p></div>
+          <div class="visual-copy"><strong>현재 데모 보기</strong><p>자산 계정, 거래안, 정책 경계와 지갑 승인 흐름을 확인할 수 있습니다.</p></div>
         </a>
       </section>
 
@@ -64,8 +64,8 @@
       <section class="card" aria-label="팀원 프로필">
         <h3 class="name">Sunjin Jo</h3>
         <p class="role">창업자 · 제품 기획 및 개발 · 대한민국</p>
-        <p>조사, 코드 초안, 문서 정리에는 AI 도구를 보조로 씁니다. 문제를 정의하고 제품을 판단하며 구현 방향을 고르고 테스트 결과를 확인하는 일은 Sunjin Jo가 맡습니다. 도움받은 범위와 아직 남은 작업도 함께 공개합니다.</p>
-        <p>Sunjin Jo는 복잡한 운영 절차를 사용자가 따라갈 수 있는 흐름으로 정리하고, EVM 스마트컨트랙트와 화면을 함께 만드는 데 집중합니다.</p>
+        <p>조사와 코드 초안에는 AI 도구를 보조로 씁니다. 제품 범위와 구현 방향, 테스트 결과의 판단은 Sunjin Jo가 직접 맡습니다. 아직 구현하지 않은 범위도 함께 공개합니다.</p>
+        <p>복잡한 운영 절차를 화면 흐름으로 풀고, EVM 스마트컨트랙트와 웹 화면을 함께 구현합니다.</p>
       </section>
 
       <footer>바로 보기: <a href="mvp/">MVP 데모</a> · <a href="https://www.linkedin.com/in/redsunjin/">LinkedIn</a> · <a href="https://github.com/redsunjin">GitHub</a></footer>

@@ -33,7 +33,7 @@
       <div class="wrap">
         <div class="num">GIWA GASOK · Track 01 DeFi / RWA</div>
         <h1>Asset<br><span class="accent">Passport</span></h1>
-        <p>AI가 온체인 자산을 점검하고, 사람이 승인한 거래만 GIWA에서 실행·증명하는 AssetOps 안전장치</p>
+        <p>온체인 자산 상태를 점검하고, 사람이 승인한 거래만 GIWA에서 실행하도록 설계한 테스트넷 MVP</p>
         <span class="pill">by AssetPass</span>
       </div>
       <footer>01 / 08</footer>
@@ -42,11 +42,11 @@
     <section class="slide">
       <div class="wrap">
         <div class="num">Problem</div>
-        <h2>AI가 자금을<br><span class="accent">마음대로 움직이지 못하게</span><br>하려면?</h2>
+        <h2>AI 자동화에도<br><span class="accent">지갑 통제가 필요한</span><br>이유</h2>
         <div class="grid">
           <div class="card"><div class="big">잔액</div><p>수수료·정산 지갑의 부족을 사람이 늦게 발견하면 거래가 멈춥니다.</p></div>
           <div class="card"><div class="big">통제</div><p>AI 자동화는 필요하지만 개인키와 무인 송금 권한을 줄 수는 없습니다.</p></div>
-          <div class="card"><div class="big">대조</div><p>누가 어떤 정책 안에서 거래를 실행했는지 tx hash로 확인할 수 있어야 합니다.</p></div>
+          <div class="card"><div class="big">대조</div><p>누가 어떤 정책 안에서 거래를 실행했는지 tx hash로 확인해야 합니다.</p></div>
         </div>
       </div>
       <footer>02 / 08</footer>
@@ -55,11 +55,11 @@
     <section class="slide">
       <div class="wrap">
         <div class="num">Solution</div>
-        <h2><span class="accent">AI 제안</span> 뒤에<br>정책 검사와 사람의 승인,<br>그리고 GIWA 실행</h2>
+        <h2><span class="accent">거래안</span>에<br>정책 검사와 사람의 승인,<br>그리고 GIWA 기록</h2>
         <div class="grid">
-          <div class="card"><h3>Asset Watcher + Planner</h3><p>잔액·예정 지급을 점검하고 수신자·금액·근거가 담긴 거래안을 만듭니다.</p></div>
-          <div class="card"><h3>Policy + human approval</h3><p>한도와 허용 수신자를 규칙으로 검사하고, 책임자가 지갑으로 실행합니다.</p></div>
-          <div class="card"><h3>GIWA proof</h3><p>실제 자산 이동, 승인자, 제안·정책 해시를 같은 체인에서 대조합니다.</p></div>
+          <div class="card"><h3>점검과 거래안</h3><p>잔액·예정 지급을 점검하고 수신자·금액·근거가 담긴 거래안을 만듭니다.</p></div>
+          <div class="card"><h3>정책과 지갑 승인</h3><p>한도와 허용 수신자를 규칙으로 검사하고, 책임자가 지갑으로 실행합니다.</p></div>
+          <div class="card"><h3>GIWA 기록</h3><p>제안·정책 해시, 승인 지갑, 실행 결과를 같은 거래 기록에서 대조합니다.</p></div>
         </div>
       </div>
       <footer>03 / 08</footer>
@@ -68,8 +68,8 @@
     <section class="slide">
       <div class="wrap">
         <div class="num">Product flow</div>
-        <h2>자산을 <span class="accent">움직이기 전</span>에<br>사람이 한 번 더 확인합니다.</h2>
-        <div class="grid"><div class="card"><h3>01 · Watch</h3><p>잔액과 일정을 주기적으로 점검</p></div><div class="card"><h3>02 · Propose</h3><p>정책 범위의 거래안과 근거 작성</p></div><div class="card"><h3>03 · Approve & prove</h3><p>지갑 실행 뒤 GIWA 영수증 대조</p></div></div>
+        <h2>자산을 <span class="accent">움직이기 전</span>에<br>사람이 내용과 한도를 확인합니다.</h2>
+        <div class="grid"><div class="card"><h3>01 · 점검</h3><p>잔액과 일정을 주기적으로 확인</p></div><div class="card"><h3>02 · 거래안</h3><p>정책 범위의 수신자·금액·근거 정리</p></div><div class="card"><h3>03 · 승인과 기록</h3><p>지갑 실행 뒤 GIWA 영수증 대조</p></div></div>
       </div>
       <footer>04 / 08</footer>
     </section>
@@ -77,11 +77,11 @@
     <section class="slide">
       <div class="wrap">
         <div class="num">Why GIWA</div>
-        <h2>온체인 거래 통제에 맞는<br><span class="accent">빠르고 EVM 호환적인</span> 실행 환경</h2>
+        <h2>온체인 거래 통제를 위한<br><span class="accent">EVM 호환</span> 테스트넷</h2>
         <div class="grid">
-          <div class="card"><h3>Same-chain verification</h3><p>AI 제안의 해시, 사람 지갑 실행, 실제 자산 이동을 같은 체인에서 대조합니다.</p></div>
-          <div class="card"><h3>Wallet-native control</h3><p>표준 EVM 지갑으로 AI의 제안권과 사람의 실행권을 분리합니다.</p></div>
-          <div class="card"><h3>GIWA-native value</h3><p>GIWA Sepolia에서 Test ETH 실행과 이벤트 영수증을 실제로 시연합니다.</p></div>
+          <div class="card"><h3>같은 체인에서 대조</h3><p>제안·정책 해시, 사람 지갑 실행, 자산 이동을 같은 체인에서 확인합니다.</p></div>
+          <div class="card"><h3>지갑 중심 통제</h3><p>표준 EVM 지갑으로 AI의 제안과 사람의 실행 권한을 분리합니다.</p></div>
+          <div class="card"><h3>GIWA Sepolia</h3><p>Test ETH 실행과 이벤트 영수증을 검증할 컨트랙트와 화면을 준비했습니다.</p></div>
         </div>
       </div>
       <footer>05 / 08</footer>
@@ -90,12 +90,12 @@
     <section class="slide">
       <div class="wrap">
         <div class="num">Working demo & validation</div>
-        <h2>한 번의 <span class="accent">거래 제안</span>과<br>한 번의 지갑 실행으로<br>가치를 증명합니다.</h2>
+        <h2><span class="accent">한 건의 거래</span>로<br>확인할 범위와<br>다음 검증</h2>
         <div class="grid two">
-          <div class="card"><h3>현재 작동하는 데모</h3><p>자산 계정, Asset Watcher, 거래안, 정책 검사, AI 공급자 경계를 한 화면에서 확인합니다.</p></div>
-          <div class="card"><h3>배포 뒤 확인할 것</h3><p>잔액 점검 1회 → 거래안 1회 → 지갑 실행 1회 → GIWA tx hash 영수증 1회를 대조합니다.</p></div>
+          <div class="card"><h3>현재 구현된 범위</h3><p>자산 계정, 거래안, 정책 검사, 지갑 연결, AI 공급자 설정을 한 화면에서 확인합니다.</p></div>
+          <div class="card"><h3>다음 테스트넷 검증</h3><p>잔액 점검 1회 → 거래안 1회 → 지갑 실행 1회 → GIWA tx hash 영수증 1회를 대조합니다.</p></div>
         </div>
-        <p class="sub">AI는 개인키·자동 승인·자동 이체 권한을 갖지 않습니다. 완료 기준은 화면의 제안·정책·컨트랙트·Explorer 이벤트가 같은 거래를 가리키는 것입니다.</p>
+        <p class="sub">AI는 개인키·자동 승인·자동 이체 권한을 갖지 않습니다. 테스트넷 배포 뒤에는 화면의 제안·정책, 컨트랙트·Explorer 이벤트가 같은 거래를 가리키는지 확인합니다.</p>
         <iframe class="demo-frame" src="mvp/" title="Asset Passport AssetOps 데모" loading="lazy"></iframe>
       </div>
       <footer>06 / 08</footer>
@@ -104,11 +104,11 @@
     <section class="slide">
       <div class="wrap">
         <div class="num">Roadmap</div>
-        <h2>테스트넷 검증에서<br>실제 운영 <span class="accent">파일럿</span>으로</h2>
+        <h2>테스트넷 검증 뒤<br>실제 운영 <span class="accent">파일럿</span></h2>
         <div class="grid">
-          <div class="card"><h3>Now</h3><p>GIWA Sepolia에서 점검·거래 제안·지갑 실행·tx hash 영수증을 시연합니다.</p></div>
-          <div class="card"><h3>Next</h3><p>DAO·Web3 재무 운영팀과 정책 템플릿·잔액 알림·정산 지급 파일럿을 검증합니다.</p></div>
-          <div class="card"><h3>Later</h3><p>RWA 분배·기업 온체인 정산·다중 승인과 Safe 연동으로 확장합니다.</p></div>
+          <div class="card"><h3>현재</h3><p>컨트랙트 테스트, 거래안, 정책 검사, 지갑 연결 화면을 준비했습니다.</p></div>
+          <div class="card"><h3>다음</h3><p>GIWA Sepolia에서 Test ETH 거래 1건과 tx hash 영수증을 검증합니다.</p></div>
+          <div class="card"><h3>이후</h3><p>DAO·Web3 재무 운영팀과 정책 템플릿, 잔액 알림, 정산 지급을 검증합니다.</p></div>
         </div>
       </div>
       <footer>07 / 08</footer>
@@ -117,8 +117,8 @@
     <section class="slide">
       <div class="wrap">
         <div class="num">Vision</div>
-        <h2>AI 시대의 자산운영은<br><span class="accent">사람의 실행 통제</span>에서 시작됩니다.</h2>
-        <p>AssetPass는 자산을 임의로 보관하거나 AI에게 송금 권한을 주지 않습니다. AI가 운영 리스크와 실행안을 먼저 드러내고, 사람이 승인한 온체인 거래만 증명하는 안전한 AssetOps 계층을 만듭니다.</p>
+        <h2>AI 시대의 온체인 자산 운영,<br><span class="accent">실행 권한은 사람에게</span></h2>
+        <p>AssetPass는 자산을 보관하거나 AI에게 송금 권한을 주지 않습니다. AI가 운영 리스크와 거래안을 먼저 보여 주고, 사람 지갑이 승인한 온체인 거래만 기록합니다.</p>
         <span class="pill">Asset Passport · GIWA GASOK 2026</span>
       </div>
       <footer>08 / 08 · <a href="mvp/">MVP 데모</a> · <a href="https://github.com/redsunjin/assetpass">github.com/redsunjin/assetpass</a></footer>
