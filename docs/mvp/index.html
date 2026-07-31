@@ -3,123 +3,112 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Asset Passport AI Release Gate demonstration" />
-    <title>Asset Passport — AI Release Gate</title>
+    <meta name="description" content="Asset Passport, AI-assisted on-chain asset operations demo" />
+    <title>Asset Passport — On-chain AssetOps</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="shell" data-app-mode="operation">
-      <header>
+    <main class="shell" data-view="operations">
+      <header class="topbar">
         <div>
-          <p class="eyebrow">GIWA Sepolia · AI Release Copilot · Demo only</p>
-          <h1>Asset Passport<br /><span>Release Gate</span></h1>
-          <p class="subtitle">AI가 공시 전 누락·버전 위험을 먼저 찾아내고, 사람이 승인한 공개 준비 상태만 GIWA에 증명합니다.</p>
+          <p class="eyebrow">GIWA Sepolia · Demo only</p>
+          <h1>Asset Passport</h1>
+          <p class="subtitle">AI가 자산 상태를 점검하고 거래안을 제안하면, 사람의 지갑 승인이 있어야만 온체인에서 실행되는 자산 운영 도구</p>
         </div>
-        <button id="wallet-button" class="wallet-button" type="button">지갑 연결</button>
+        <button id="wallet-button" class="button secondary" type="button">지갑 연결</button>
       </header>
 
-      <nav class="app-mode-tabs" aria-label="MVP 화면 전환">
-        <button class="app-mode-tab active" type="button" data-app-mode="operation" aria-pressed="true">운영 화면</button>
-        <button class="app-mode-tab" type="button" data-app-mode="settings" aria-pressed="false">지갑 · AI 설정</button>
+      <nav class="view-tabs" aria-label="Asset Passport 화면">
+        <button class="view-tab active" type="button" data-view="operations" aria-pressed="true">오늘의 운영</button>
+        <button class="view-tab" type="button" data-view="settings" aria-pressed="false">정책 · 지갑 · AI 설정</button>
       </nav>
 
-      <aside class="notice operation-only" role="note">
-        <strong>가상 자산으로 만든 작동 시연입니다.</strong> AI는 공시 위험과 다음 행동을 제안할 뿐, 법률 판단·자동 승인·자동 공시를 하지 않습니다. 최종 결정은 책임자의 지갑 승인으로만 이뤄지며 원본 문서는 GIWA에 기록하지 않습니다.
+      <aside class="notice">
+        <strong>이 화면은 가상 자금·정책으로 만든 데모입니다.</strong> AI는 개인키를 보유하거나 자동 이체하지 않습니다. 정책은 기계적으로 검사하고, 실행 권한은 연결된 지갑 소유자에게만 있습니다.
       </aside>
 
-      <section class="gate-hero operation-only" aria-labelledby="gate-title">
-        <div class="gate-label">공개 준비 상태</div>
-        <div class="gate-copy">
-          <p id="gate-state" class="gate-state">점검 중</p>
-          <h2 id="gate-title">AI Release Copilot이 증빙을 확인하고 있습니다.</h2>
-          <p id="gate-reason">시나리오를 선택하면 공시가 가능한지와 근거를 보여 줍니다.</p>
-          <div class="gate-actions"><button id="gate-primary" class="primary-button" type="button">다음 행동 보기</button><button id="gate-evidence" class="secondary-button" type="button">AI 근거 보기</button></div>
+      <section class="operations-only hero" aria-labelledby="hero-title">
+        <div>
+          <p class="eyebrow">Today’s AssetOps</p>
+          <p id="hero-state" class="state waiting">승인 대기</p>
+          <h2 id="hero-title">AI가 확인한 거래안 1건이 있습니다.</h2>
+          <p id="hero-copy">정책 범위 안의 소액 Test ETH 보충 거래입니다. 내용 확인 뒤 지갑으로 실행할 수 있습니다.</p>
+          <div class="hero-actions">
+            <button id="open-proposal" class="button primary" type="button">거래안 확인</button>
+            <button id="run-watcher" class="button secondary" type="button">지금 다시 점검</button>
+          </div>
         </div>
-        <div class="gate-metric"><span>해결할 항목</span><strong id="issue-count">–</strong></div>
+        <dl class="hero-metric"><div><dt>최근 점검</dt><dd id="last-scan">데모 기준 10:00</dd></div><div><dt>열린 제안</dt><dd id="proposal-count">1</dd></div></dl>
       </section>
 
-      <section class="workflow-guide operation-only" aria-labelledby="workflow-guide-title">
-        <div class="workflow-guide-heading"><div><p class="eyebrow">Release workflow</p><h2 id="workflow-guide-title">무엇이 어디서 판단되고, 무엇이 GIWA에 남는가</h2></div><p>원본 문서는 밖에 두고, AI의 제안과 사람의 결정을 분리해 공개 준비 상태를 만듭니다.</p></div>
-        <div class="workflow-tabs" role="tablist" aria-label="Release Gate 시연 단계">
-          <button id="workflow-tab-0" class="workflow-tab active" type="button" role="tab" aria-selected="true" aria-controls="workflow-stage" data-workflow-step="0"><span>01</span><strong>자료 등록</strong></button>
-          <button id="workflow-tab-1" class="workflow-tab" type="button" role="tab" aria-selected="false" aria-controls="workflow-stage" data-workflow-step="1"><span>02</span><strong>AI 사전 점검</strong></button>
-          <button id="workflow-tab-2" class="workflow-tab" type="button" role="tab" aria-selected="false" aria-controls="workflow-stage" data-workflow-step="2"><span>03</span><strong>사람의 승인</strong></button>
-          <button id="workflow-tab-3" class="workflow-tab" type="button" role="tab" aria-selected="false" aria-controls="workflow-stage" data-workflow-step="3"><span>04</span><strong>GIWA 증명</strong></button>
-          <button id="workflow-tab-4" class="workflow-tab" type="button" role="tab" aria-selected="false" aria-controls="workflow-stage" data-workflow-step="4"><span>05</span><strong>공개 검증</strong></button>
-        </div>
-        <section id="workflow-stage" class="workflow-stage" role="tabpanel" aria-labelledby="workflow-tab-0" tabindex="-1">
-          <div><p id="workflow-stage-index" class="eyebrow">Step 01 · Issuer</p><h3 id="workflow-stage-title">자료 등록: 원본은 밖에, 증빙값만 연결</h3><p id="workflow-stage-description">발행자는 원본 문서를 오프체인에 보관하고 문서 해시·버전·기준일을 등록합니다. 이 입력이 이후 모든 판단의 기준이 됩니다.</p></div>
-          <dl class="workflow-stage-facts"><div><dt>입력</dt><dd id="workflow-stage-input">문서 메타데이터 · 해시 · 버전</dd></div><div><dt>결과</dt><dd id="workflow-stage-output">점검할 공개 준비 자료</dd></div></dl>
-          <div class="workflow-actions"><button id="workflow-prev" class="secondary-button" type="button" disabled>이전 단계</button><button id="workflow-next" class="primary-button" type="button">다음: AI 사전 점검</button><button id="workflow-open" class="secondary-button" type="button">이 단계 화면 보기</button></div>
-        </section>
+      <section class="operations-only agent-strip" aria-label="AI 에이전트 상태">
+        <article><span class="dot ready"></span><div><small>01 · Asset Watcher</small><strong>지갑 잔액과 예정 지급을 점검</strong><p id="watcher-status">수수료용 잔액이 설정 기준 아래입니다.</p></div><button id="watcher-run" class="text-button" type="button">실행</button></article>
+        <article><span class="dot ready"></span><div><small>02 · Transaction Planner</small><strong>정책 안에서 거래안 작성</strong><p>수신자·금액·근거·예상 수수료를 제안합니다.</p></div></article>
+        <article><span class="dot idle"></span><div><small>03 · Proof Keeper</small><strong>실행 결과를 대조하고 영수증 생성</strong><p id="proof-status">승인 뒤 GIWA 거래를 확인합니다.</p></div></article>
       </section>
 
-      <section id="control-room" class="control-room settings-only" aria-labelledby="control-room-title">
-        <div class="control-room-heading">
-          <div><p class="eyebrow">Manager control room</p><h2 id="control-room-title">운영자가 한 화면에서 상황을 판단합니다.</h2></div>
-          <p>AI는 제안하고, 사람은 결정하며, GIWA는 결정된 사실을 증명합니다.</p>
-        </div>
-        <p class="operation-rail-label">현재 선택한 사례의 운영 상태</p>
-        <ol class="operation-rail" aria-label="현재 사례의 공개 운영 상태">
-          <li class="active"><span>01</span><strong>AI 사전 점검</strong><small id="rail-ai">위험 확인 대기</small></li>
-          <li><span>02</span><strong>책임자 승인</strong><small id="rail-human">지갑 검토 대기</small></li>
-          <li><span>03</span><strong>GIWA 공개 증명</strong><small id="rail-giwa">승인 뒤 기록</small></li>
-          <li><span>04</span><strong>외부 검증</strong><small id="rail-public">Passport 공유 대기</small></li>
-        </ol>
-        <div class="control-grid">
-          <section class="control-card wallet-control" aria-labelledby="wallet-control-title">
-            <div class="card-title"><div><span class="eyebrow">Wallet & roles</span><h3 id="wallet-control-title">지갑과 책임 역할</h3></div><span id="wallet-state" class="control-state">연결 전</span></div>
-            <dl class="manager-list"><div><dt>운영 지갑</dt><dd id="wallet-account">연결하면 표시됩니다</dd></div><div><dt>네트워크</dt><dd id="wallet-network">GIWA Sepolia 확인 전</dd></div><div><dt>승인 역할</dt><dd>발행자 · 검토자 · 감사자</dd></div></dl>
-            <button id="manager-wallet-button" class="secondary-button" type="button">지갑 연결 및 네트워크 확인</button>
-            <p class="card-note">실제 역할 주소는 배포 뒤 컨트랙트에서 대조합니다. 개인키·복구 구문은 이 화면에 입력하지 않습니다.</p>
-          </section>
+      <section class="operations-only dashboard" aria-label="온체인 자산 운영 대시보드">
+        <article class="panel balance-panel">
+          <div class="panel-heading"><div><p class="eyebrow">Monitored asset account</p><h2>운영 지갑</h2></div><span id="wallet-state" class="chip">연결 전</span></div>
+          <p id="account-address" class="address">지갑을 연결하면 실제 잔액을 확인합니다</p>
+          <div class="balance"><span>Test ETH 잔액</span><strong id="wallet-balance">0.0062 ETH</strong><small>정책 기준: 0.0100 ETH 이상</small></div>
+          <div class="meter" aria-label="잔액 정책 기준 대비"><span id="balance-meter"></span></div>
+          <p id="balance-note" class="muted">데모 계정의 잔액이 기준보다 낮아 AI가 보충 거래를 제안했습니다.</p>
+        </article>
 
-          <section class="control-card ai-control" aria-labelledby="ai-control-title">
-            <div class="card-title"><div><span class="eyebrow">AI supplier & agents</span><h3 id="ai-control-title">AI 공급 정보와 에이전트 관리</h3></div><span id="ai-state" class="control-state">규칙 엔진</span></div>
-            <dl class="supplier-list"><div><dt>현재 공급자</dt><dd id="ai-supplier">내장 증빙 규칙 · LLM 미사용</dd></div><div><dt>AI가 받는 정보</dt><dd id="ai-data-scope">문서 메타데이터·버전·승인 상태</dd></div><div><dt>데이터 경로</dt><dd id="ai-route">브라우저 내부 · 네트워크 전송 없음</dd></div></dl>
-            <div id="ai-supplier-list" class="ai-supplier-list" aria-label="등록된 AI 공급자"></div>
-            <div class="field-grid"><label>현재 사용할 공급자<select id="ai-provider"></select></label><label>연결 주소<input id="ai-endpoint" type="url" inputmode="url" placeholder="http://127.0.0.1:11434 또는 https://relay.example.com/v1" /></label><label>모델 이름<input id="ai-model" type="text" placeholder="예: llama3.2:3b" /></label></div>
-            <div class="button-row"><button id="save-ai-settings" class="secondary-button" type="button">현재 프로필 저장</button><button id="test-ai-connection" class="secondary-button" type="button">공급자 연결 확인</button><button id="run-ai-preflight" class="primary-button" type="button">AI 사전 점검 실행</button></div>
-            <div class="supplier-registration"><p class="eyebrow">Register supplier</p><h4>AI 공급자 프로필 등록</h4><p>로컬 Ollama 또는 서버가 비밀키를 관리하는 HTTPS 보안 릴레이를 등록합니다.</p><div class="field-grid"><label>공급자 이름<input id="new-ai-supplier-name" type="text" placeholder="예: 법무팀 AI 릴레이" /></label><label>연결 방식<select id="new-ai-supplier-kind"><option value="ollama">로컬 Ollama</option><option value="relay">외부 AI 보안 릴레이</option></select></label><label>기본 주소<input id="new-ai-supplier-endpoint" type="url" inputmode="url" placeholder="로컬: http://127.0.0.1:11434" /></label><label>기본 모델<input id="new-ai-supplier-model" type="text" placeholder="예: llama3.2:3b" /></label></div><button id="register-ai-supplier" class="secondary-button" type="button">공급자 등록</button></div>
-            <div id="ai-run-result" class="agent-result" aria-live="polite">현재는 내장 증빙 규칙이 선택되어 있습니다. 원본 파일은 전송하지 않고, 화면의 메타데이터·버전·승인 상태만 점검합니다.</div>
-            <p class="card-note">공급자 프로필은 이 브라우저에만 저장됩니다. API 키는 입력·저장하지 않습니다. 외부 AI는 HTTPS 보안 릴레이가 공급자 키를 서버에서 관리할 때만 연결합니다.</p>
-          </section>
-
-          <section class="control-card agents-control" aria-labelledby="agents-control-title">
-            <div class="card-title"><div><span class="eyebrow">Agent roster</span><h3 id="agents-control-title">에이전트별 책임 범위</h3></div><span class="control-state ready">3개 역할</span></div>
-            <ul class="agent-roster"><li><span class="agent-dot active"></span><div><strong>Release Scout</strong><small>버전·누락 증빙·승인 연결 탐지</small></div><em>제안만</em></li><li><span class="agent-dot active"></span><div><strong>Disclosure Explainer</strong><small>관리자가 읽는 차단 사유·다음 행동 생성</small></div><em>제안만</em></li><li><span class="agent-dot active"></span><div><strong>Verification Guard</strong><small>파일 SHA-256과 온체인 이력 대조</small></div><em>검증</em></li></ul>
-            <p class="card-note">세 에이전트 모두 승인권이 없습니다. 승인과 공시는 지갑 권한을 가진 사람이 실행합니다.</p>
-          </section>
-        </div>
-      </section>
-
-      <section class="proof-grid operation-only" aria-label="Release Gate 구조">
-        <article class="proof-card"><span class="proof-number">01 · AI 제안</span><h2>무엇이 빠졌는지 찾습니다</h2><p>버전, 기준일, 필수 증빙, 이전 승인과의 연결을 비교해 위험과 다음 행동을 제안합니다.</p></article>
-        <article class="proof-card"><span class="proof-number">02 · 사람의 결정</span><h2>책임자가 승인합니다</h2><p>AI는 승인권자가 아닙니다. 검토자와 감사자가 근거를 보고 지갑으로 결정합니다.</p></article>
-        <article class="proof-card"><span class="proof-number">03 · GIWA 증명</span><h2>공개 가능한 상태만 남깁니다</h2><p>승인·상태 전이·문서 해시를 GIWA에서 대조해 외부 검증자가 확인합니다.</p></article>
-      </section>
-
-      <section class="workspace operation-only" aria-label="Release Gate workspace">
-        <div class="panel scenario-panel">
-          <div class="panel-heading"><h2>공시 시나리오</h2><span>하나의 실패에서 시작</span></div>
-          <div id="asset-list" class="asset-list" aria-live="polite"></div>
-        </div>
-        <article id="asset-detail" class="panel detail" aria-live="polite">
-          <p class="empty-state">시나리오를 선택하면 AI 제안, 사람의 승인, GIWA 증명을 순서대로 확인할 수 있습니다.</p>
+        <article id="proposal-card" class="panel proposal-panel" tabindex="-1">
+          <div class="panel-heading"><div><p class="eyebrow">AI transaction proposal</p><h2>수수료용 잔액 보충</h2></div><span id="proposal-state" class="chip warning">승인 필요</span></div>
+          <p class="proposal-summary">Asset Watcher가 다음 지급 전 수수료 부족 가능성을 감지했습니다. Transaction Planner가 허용된 운영 지갑으로 보충을 제안합니다.</p>
+          <dl class="proposal-facts">
+            <div><dt>보낼 금액</dt><dd id="proposal-amount">0.0010 Test ETH</dd></div>
+            <div><dt>수신자</dt><dd id="proposal-recipient" class="address">0x8A45…3E19</dd></div>
+            <div><dt>근거</dt><dd>잔액 기준 미달 · 다음 정산 전 보충</dd></div>
+            <div><dt>예상 수수료</dt><dd>네트워크 지갑에서 확인</dd></div>
+          </dl>
+          <div class="policy-check"><span>Policy Guard · 정책 검사 통과</span><strong>허용 수신자 · 건당 한도 0.005 ETH · 운영 시간 모두 충족</strong></div>
+          <div class="proposal-actions"><button id="approve-proposal" class="button primary" type="button">내용 확인 후 지갑으로 실행</button><button id="reject-proposal" class="button secondary" type="button">이번 제안 보류</button></div>
+          <p id="proposal-result" class="result" aria-live="polite">AI 제안은 실행 권한이 아닙니다. 지갑 승인 전에는 자금이 이동하지 않습니다.</p>
         </article>
       </section>
 
-      <section class="boundary operation-only" aria-label="기록 경계">
-        <div><span class="eyebrow">ON GIWA</span><strong>자산 식별자 · 문서 해시 · 버전 · 사람의 승인 · 상태 이력</strong></div>
-        <div><span class="eyebrow">OFF GIWA</span><strong>원본 문서 · 개인정보 · 실물자산 정보 · 법률 판단 · 자금</strong></div>
+      <section class="operations-only receipt panel" aria-labelledby="receipt-title">
+        <div class="panel-heading"><div><p class="eyebrow">Execution receipt</p><h2 id="receipt-title">승인 → 실행 → 대조</h2></div><span id="receipt-state" class="chip">대기</span></div>
+        <ol id="receipt-timeline" class="timeline">
+          <li><time>10:00</time><div><strong>Asset Watcher 점검 완료</strong><p>잔액 기준 미달을 감지했습니다.</p></div></li>
+          <li><time>10:01</time><div><strong>Transaction Planner 거래안 생성</strong><p>정책 범위 안의 0.0010 Test ETH 보충안을 만들었습니다.</p></div></li>
+          <li><time>—</time><div><strong>사람의 지갑 승인 대기</strong><p>승인된 거래만 GIWA에서 실행하고 tx hash를 영수증에 붙입니다.</p></div></li>
+        </ol>
+      </section>
+
+      <section class="settings-only settings-grid" aria-label="Asset Passport 설정">
+        <article class="panel">
+          <p class="eyebrow">Wallet & network</p><h2>운영 지갑과 GIWA</h2>
+          <dl class="settings-list"><div><dt>연결 지갑</dt><dd id="settings-account">연결 전</dd></div><div><dt>네트워크</dt><dd id="network-name">GIWA Sepolia 확인 전</dd></div><div><dt>실행 컨트랙트</dt><dd id="controller-address" class="address">테스트넷 배포 전</dd></div></dl>
+          <button id="settings-wallet-button" class="button secondary" type="button">지갑 연결 및 네트워크 확인</button>
+          <p class="muted">개인키·복구 구문은 입력받지 않습니다. MVP에서는 테스트 자금만 사용합니다.</p>
+        </article>
+        <article class="panel">
+          <p class="eyebrow">Policy guard</p><h2>사람이 정한 실행 규칙</h2>
+          <dl class="settings-list"><div><dt>건당 한도</dt><dd>0.005 Test ETH</dd></div><div><dt>허용 수신자</dt><dd>운영 보충 지갑 1개</dd></div><div><dt>자동 실행</dt><dd>사용 안 함</dd></div><div><dt>검사 주기</dt><dd>매일 09:00 · 실제 스케줄러 연결 전</dd></div></dl>
+          <p class="muted">정책 검사는 LLM이 아니라 결정적 규칙 엔진이 수행합니다. 운영 환경에서는 서버 스케줄러가 Watcher를 호출합니다.</p>
+        </article>
+        <article class="panel ai-settings">
+          <p class="eyebrow">AI supplier & agents</p><h2>AI는 제안하고 설명합니다</h2>
+          <label>현재 공급자<select id="ai-provider"><option value="rules">내장 규칙 엔진 · LLM 미사용</option><option value="ollama">로컬 Ollama · 이 기기</option><option value="relay">외부 AI 보안 릴레이</option></select></label>
+          <label>모델 또는 공급자 설명<input id="ai-model" type="text" placeholder="예: llama3.2:3b" /></label>
+          <div class="agent-roles"><div><strong>Asset Watcher</strong><span>잔액·일정·미확정 거래 점검</span></div><div><strong>Transaction Planner</strong><span>거래안과 근거 작성</span></div><div><strong>Proof Keeper</strong><span>GIWA 결과 대조·영수증 정리</span></div></div>
+          <button id="save-ai-settings" class="button secondary" type="button">AI 설정 저장</button>
+          <p id="ai-settings-result" class="result" aria-live="polite">LLM은 설명·요약을 보조합니다. 승인·한도 검사·송금 권한은 갖지 않습니다.</p>
+        </article>
+      </section>
+
+      <section class="operations-only boundaries panel" aria-label="권한과 데이터 경계">
+        <div><p class="eyebrow">AI</p><strong>주기 점검 · 거래 제안 · 결과 설명</strong><span>개인키 없음 · 자동 이체 없음</span></div>
+        <div><p class="eyebrow">Policy + human wallet</p><strong>한도·수신자 검사 · 최종 실행</strong><span>승인 없는 거래는 실행 불가</span></div>
+        <div><p class="eyebrow">GIWA</p><strong>실제 자산 이동 · tx hash · 실행 이력</strong><span>동일 체인에서 독립 대조</span></div>
       </section>
     </main>
-    <template id="asset-template">
-      <button class="asset-item" type="button">
-        <span class="asset-id"></span><strong></strong><span class="status"></span><small></small>
-      </button>
-    </template>
-    <script>window.ASSET_PASSPORT_DATA_URL = "demo-assets.json"; window.ASSET_PASSPORT_SAMPLE_BASE = "./";</script><script src="config.js"></script>
+    <script src="config.js"></script>
     <script src="app.js"></script>
   </body>
 </html>

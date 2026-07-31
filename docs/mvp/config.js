@@ -6,6 +6,6 @@ window.ASSET_PASSPORT_CONFIG = {
     rpcUrls: ["https://sepolia-rpc.giwa.io"],
     blockExplorerUrls: ["https://sepolia-explorer.giwa.io"],
   },
-  // Set after the testnet deployment. The UI deliberately does not send contract transactions until then.
-  registryAddress: "",
+  // Set after the tested GIWA deployment. The UI never stores a private key and only the connected wallet can execute.
+  controllerAddress: "",
 };
