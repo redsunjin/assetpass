@@ -62,6 +62,22 @@ function moveWorkflowTabByKeyboard(event) {
   document.querySelector(`#workflow-tab-${next}`)?.focus();
 }
 
+function setAppMode(mode) {
+  document.querySelector(".shell").dataset.appMode = mode;
+  document.querySelectorAll(".app-mode-tab").forEach((button) => {
+    const active = button.dataset.appMode === mode;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-pressed", String(active));
+  });
+  if (mode === "settings") document.querySelector("#control-room")?.scrollIntoView({ behavior: "auto", block: "start" });
+}
+
+function openGateAction(event) {
+  const target = document.querySelector(event.currentTarget.dataset.target) || document.querySelector("#asset-detail");
+  target?.scrollIntoView({ behavior: "auto", block: "start" });
+  target?.focus?.({ preventScroll: true });
+}
+
 function renderGate(asset) {
   const blocked = asset.aiReview.decision === "block";
   const stateEl = document.querySelector("#gate-state");
@@ -75,6 +91,11 @@ function renderGate(asset) {
   document.querySelector("#rail-giwa").textContent = asset.status === "disclosed" ? "공개 상태 증명됨" : "사람 승인 뒤 기록";
   document.querySelector("#rail-public").textContent = asset.status === "disclosed" ? "해시 대조 가능" : "공개 전";
   document.querySelectorAll(".operation-rail li").forEach((node, index) => node.classList.toggle("active", index === 0 || (index === 1 && asset.status === "review") || (index > 1 && asset.status === "disclosed")));
+  const primary = document.querySelector("#gate-primary");
+  if (asset.status === "review") { primary.textContent = "검토자 승인으로 이동"; primary.dataset.target = "#sign-review"; }
+  else if (asset.status === "disclosed") { primary.textContent = "공개 검증으로 이동"; primary.dataset.target = "#verify-file"; }
+  else { primary.textContent = "자료 등록 상태 보기"; primary.dataset.target = "#asset-list"; }
+  document.querySelector("#gate-evidence").dataset.target = ".ai-card";
 }
 
 function renderList() {
@@ -347,6 +368,9 @@ async function init() {
 
 document.querySelector("#wallet-button").addEventListener("click", connectWallet);
 document.querySelector("#manager-wallet-button").addEventListener("click", connectWallet);
+document.querySelectorAll(".app-mode-tab").forEach((button) => button.addEventListener("click", () => setAppMode(button.dataset.appMode)));
+document.querySelector("#gate-primary").addEventListener("click", openGateAction);
+document.querySelector("#gate-evidence").addEventListener("click", openGateAction);
 document.querySelectorAll("[data-workflow-step]").forEach((tab) => {
   tab.addEventListener("click", () => setWorkflowStep(Number(tab.dataset.workflowStep)));
   tab.addEventListener("keydown", moveWorkflowTabByKeyboard);

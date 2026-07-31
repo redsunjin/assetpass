@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <main class="shell">
+    <main class="shell" data-app-mode="operation">
       <header>
         <div>
           <p class="eyebrow">GIWA Sepolia · AI Release Copilot · Demo only</p>
@@ -18,21 +18,27 @@
         <button id="wallet-button" class="wallet-button" type="button">지갑 연결</button>
       </header>
 
-      <aside class="notice" role="note">
+      <nav class="app-mode-tabs" aria-label="MVP 화면 전환">
+        <button class="app-mode-tab active" type="button" data-app-mode="operation" aria-pressed="true">운영 화면</button>
+        <button class="app-mode-tab" type="button" data-app-mode="settings" aria-pressed="false">지갑 · AI 설정</button>
+      </nav>
+
+      <aside class="notice operation-only" role="note">
         <strong>가상 자산으로 만든 작동 시연입니다.</strong> AI는 공시 위험과 다음 행동을 제안할 뿐, 법률 판단·자동 승인·자동 공시를 하지 않습니다. 최종 결정은 책임자의 지갑 승인으로만 이뤄지며 원본 문서는 GIWA에 기록하지 않습니다.
       </aside>
 
-      <section class="gate-hero" aria-labelledby="gate-title">
+      <section class="gate-hero operation-only" aria-labelledby="gate-title">
         <div class="gate-label">공개 준비 상태</div>
         <div class="gate-copy">
           <p id="gate-state" class="gate-state">점검 중</p>
           <h2 id="gate-title">AI Release Copilot이 증빙을 확인하고 있습니다.</h2>
           <p id="gate-reason">시나리오를 선택하면 공시가 가능한지와 근거를 보여 줍니다.</p>
+          <div class="gate-actions"><button id="gate-primary" class="primary-button" type="button">다음 행동 보기</button><button id="gate-evidence" class="secondary-button" type="button">AI 근거 보기</button></div>
         </div>
         <div class="gate-metric"><span>해결할 항목</span><strong id="issue-count">–</strong></div>
       </section>
 
-      <section class="workflow-guide" aria-labelledby="workflow-guide-title">
+      <section class="workflow-guide operation-only" aria-labelledby="workflow-guide-title">
         <div class="workflow-guide-heading"><div><p class="eyebrow">Release workflow</p><h2 id="workflow-guide-title">무엇이 어디서 판단되고, 무엇이 GIWA에 남는가</h2></div><p>원본 문서는 밖에 두고, AI의 제안과 사람의 결정을 분리해 공개 준비 상태를 만듭니다.</p></div>
         <div class="workflow-tabs" role="tablist" aria-label="Release Gate 시연 단계">
           <button id="workflow-tab-0" class="workflow-tab active" type="button" role="tab" aria-selected="true" aria-controls="workflow-stage" data-workflow-step="0"><span>01</span><strong>자료 등록</strong></button>
@@ -48,7 +54,7 @@
         </section>
       </section>
 
-      <section id="control-room" class="control-room" aria-labelledby="control-room-title">
+      <section id="control-room" class="control-room settings-only" aria-labelledby="control-room-title">
         <div class="control-room-heading">
           <div><p class="eyebrow">Manager control room</p><h2 id="control-room-title">운영자가 한 화면에서 상황을 판단합니다.</h2></div>
           <p>AI는 제안하고, 사람은 결정하며, GIWA는 결정된 사실을 증명합니다.</p>
@@ -87,13 +93,13 @@
         </div>
       </section>
 
-      <section class="proof-grid" aria-label="Release Gate 구조">
+      <section class="proof-grid operation-only" aria-label="Release Gate 구조">
         <article class="proof-card"><span class="proof-number">01 · AI 제안</span><h2>무엇이 빠졌는지 찾습니다</h2><p>버전, 기준일, 필수 증빙, 이전 승인과의 연결을 비교해 위험과 다음 행동을 제안합니다.</p></article>
         <article class="proof-card"><span class="proof-number">02 · 사람의 결정</span><h2>책임자가 승인합니다</h2><p>AI는 승인권자가 아닙니다. 검토자와 감사자가 근거를 보고 지갑으로 결정합니다.</p></article>
         <article class="proof-card"><span class="proof-number">03 · GIWA 증명</span><h2>공개 가능한 상태만 남깁니다</h2><p>승인·상태 전이·문서 해시를 GIWA에서 대조해 외부 검증자가 확인합니다.</p></article>
       </section>
 
-      <section class="workspace" aria-label="Release Gate workspace">
+      <section class="workspace operation-only" aria-label="Release Gate workspace">
         <div class="panel scenario-panel">
           <div class="panel-heading"><h2>공시 시나리오</h2><span>하나의 실패에서 시작</span></div>
           <div id="asset-list" class="asset-list" aria-live="polite"></div>
@@ -103,7 +109,7 @@
         </article>
       </section>
 
-      <section class="boundary" aria-label="기록 경계">
+      <section class="boundary operation-only" aria-label="기록 경계">
         <div><span class="eyebrow">ON GIWA</span><strong>자산 식별자 · 문서 해시 · 버전 · 사람의 승인 · 상태 이력</strong></div>
         <div><span class="eyebrow">OFF GIWA</span><strong>원본 문서 · 개인정보 · 실물자산 정보 · 법률 판단 · 자금</strong></div>
       </section>
