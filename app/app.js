@@ -1,9 +1,48 @@
 const config = window.ASSET_PASSPORT_CONFIG;
-const state = { assets: [], selectedId: null, account: null, ai: { provider: "rules", endpoint: "http://127.0.0.1:11434", model: "" } };
+const state = { assets: [], selectedId: null, account: null, workflowStep: 0, ai: { provider: "rules", endpoint: "http://127.0.0.1:11434", model: "" } };
 const labels = { draft: "초안", review: "검토 대기", approved: "승인", disclosed: "공개 가능", suspended: "중지", archived: "종료" };
+const workflowStages = [
+  { actor: "Issuer", title: "자료 등록: 원본은 밖에, 증빙값만 연결", description: "발행자는 원본 문서를 오프체인에 보관하고 문서 해시·버전·기준일을 등록합니다. 이 입력이 이후 모든 판단의 기준이 됩니다.", input: "문서 메타데이터 · 해시 · 버전", output: "점검할 공개 준비 자료", next: "AI 사전 점검", target: "#asset-list", openLabel: "등록 자료 보기" },
+  { actor: "AI Release Copilot", title: "AI 사전 점검: 위험과 다음 행동을 제안", description: "규칙 엔진 또는 선택한 로컬 LLM이 버전·누락 증빙·이전 승인과의 연결을 살핍니다. AI는 승인하지 않고, 왜 막았는지만 설명합니다.", input: "자산 ID · 문서 버전 · 승인 상태", output: "차단 사유 · 다음 행동 제안", next: "사람의 승인", target: ".ai-card", openLabel: "AI 점검 결과 보기" },
+  { actor: "Human reviewer", title: "사람의 승인: 원문 근거를 보고 책임 있게 결정", description: "검토자는 AI의 요약만 믿지 않고 원문 근거와 변경점을 확인합니다. 승인 의사는 책임자의 지갑 서명으로 남습니다.", input: "원문 근거 · AI 제안 · 책임 권한", output: "검토자 승인 의사", next: "GIWA 증명", target: "#sign-review", openLabel: "지갑 승인 화면 보기" },
+  { actor: "GIWA Sepolia", title: "GIWA 증명: 승인된 최신 상태만 기록", description: "공시가 열리면 원본이 아니라 승인된 문서 해시·승인·상태 전이만 GIWA에 남습니다. 이 데모의 실제 트랜잭션은 테스트넷 배포 뒤 확인합니다.", input: "승인된 해시 · 역할별 결정", output: "트랜잭션 · 이벤트 이력", next: "공개 검증", target: "#control-room", openLabel: "운영 상태 보기" },
+  { actor: "Partner / verifier", title: "공개 검증: 받은 파일과 증명 이력을 직접 대조", description: "파트너와 검증자는 파일의 SHA-256을 브라우저에서 계산해 기록값과 비교하고, GIWA 이력으로 공개 준비 상태를 확인합니다.", input: "받은 파일 · 공유 Passport", output: "일치 또는 재검토 필요", next: "처음으로", target: "#verify-file", openLabel: "파일 검증 화면 보기" },
+];
 
 const shortAddress = (value) => `${value.slice(0, 6)}…${value.slice(-4)}`;
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[char]);
+
+function renderWorkflow() {
+  const stage = workflowStages[state.workflowStep];
+  document.querySelector("#workflow-stage-index").textContent = `Step ${String(state.workflowStep + 1).padStart(2, "0")} · ${stage.actor}`;
+  document.querySelector("#workflow-stage-title").textContent = stage.title;
+  document.querySelector("#workflow-stage-description").textContent = stage.description;
+  document.querySelector("#workflow-stage-input").textContent = stage.input;
+  document.querySelector("#workflow-stage-output").textContent = stage.output;
+  const panel = document.querySelector("#workflow-stage");
+  panel.setAttribute("aria-labelledby", `workflow-tab-${state.workflowStep}`);
+  document.querySelectorAll("[data-workflow-step]").forEach((tab) => {
+    const active = Number(tab.dataset.workflowStep) === state.workflowStep;
+    tab.classList.toggle("active", active);
+    tab.setAttribute("aria-selected", String(active));
+  });
+  const previous = document.querySelector("#workflow-prev");
+  const next = document.querySelector("#workflow-next");
+  previous.disabled = state.workflowStep === 0;
+  next.textContent = state.workflowStep === workflowStages.length - 1 ? "처음으로" : `다음: ${stage.next}`;
+  document.querySelector("#workflow-open").textContent = stage.openLabel;
+}
+
+function setWorkflowStep(step) {
+  state.workflowStep = (step + workflowStages.length) % workflowStages.length;
+  renderWorkflow();
+}
+
+function openWorkflowScreen() {
+  const target = document.querySelector(workflowStages[state.workflowStep].target) || document.querySelector("#asset-detail");
+  target?.scrollIntoView({ behavior: "auto", block: "start" });
+  target?.focus?.({ preventScroll: true });
+}
 
 function renderGate(asset) {
   const blocked = asset.aiReview.decision === "block";
@@ -214,11 +253,15 @@ async function init() {
   if (!response.ok) throw new Error("Demo asset data could not be loaded.");
   state.assets = await response.json();
   state.selectedId = state.assets[0]?.id ?? null;
-  loadAiSettings(); updateWalletManager(); renderList(); renderDetail();
+  loadAiSettings(); updateWalletManager(); renderWorkflow(); renderList(); renderDetail();
 }
 
 document.querySelector("#wallet-button").addEventListener("click", connectWallet);
 document.querySelector("#manager-wallet-button").addEventListener("click", connectWallet);
+document.querySelectorAll("[data-workflow-step]").forEach((tab) => tab.addEventListener("click", () => setWorkflowStep(Number(tab.dataset.workflowStep))));
+document.querySelector("#workflow-prev").addEventListener("click", () => setWorkflowStep(Math.max(0, state.workflowStep - 1)));
+document.querySelector("#workflow-next").addEventListener("click", () => setWorkflowStep(state.workflowStep === workflowStages.length - 1 ? 0 : state.workflowStep + 1));
+document.querySelector("#workflow-open").addEventListener("click", openWorkflowScreen);
 document.querySelector("#ai-provider").addEventListener("change", () => updateAiManager());
 document.querySelector("#save-ai-settings").addEventListener("click", saveAiSettings);
 document.querySelector("#test-ai-connection").addEventListener("click", testAiConnection);

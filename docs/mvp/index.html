@@ -34,16 +34,21 @@
 
       <section class="workflow-guide" aria-labelledby="workflow-guide-title">
         <div class="workflow-guide-heading"><div><p class="eyebrow">Release workflow</p><h2 id="workflow-guide-title">무엇이 어디서 판단되고, 무엇이 GIWA에 남는가</h2></div><p>원본 문서는 밖에 두고, AI의 제안과 사람의 결정을 분리해 공개 준비 상태를 만듭니다.</p></div>
-        <ol class="workflow-steps">
-          <li><span>01</span><div><strong>자료 등록</strong><p>발행자가 원본을 오프체인에 보관하고 문서 해시·버전만 등록합니다.</p><small>입력: 문서 메타데이터</small></div></li>
-          <li><span>02</span><div><strong>AI 사전 점검</strong><p>공급된 LLM 또는 규칙 엔진이 버전·누락·승인 연결을 살펴봅니다.</p><small>출력: 위험과 다음 행동</small></div></li>
-          <li><span>03</span><div><strong>사람의 승인</strong><p>검토자가 원문 근거를 확인하고 책임 있는 결정을 내립니다.</p><small>행동: 지갑 서명</small></div></li>
-          <li><span>04</span><div><strong>GIWA 증명</strong><p>승인된 최신본의 해시·승인·상태 전이만 온체인에 기록합니다.</p><small>증명: 트랜잭션 이벤트</small></div></li>
-          <li><span>05</span><div><strong>공개 검증</strong><p>파트너와 검증자가 파일 해시와 GIWA 이력을 직접 대조합니다.</p><small>결과: 공유 가능한 Passport</small></div></li>
-        </ol>
+        <div class="workflow-tabs" role="tablist" aria-label="Release Gate 시연 단계">
+          <button id="workflow-tab-0" class="workflow-tab active" type="button" role="tab" aria-selected="true" aria-controls="workflow-stage" data-workflow-step="0"><span>01</span><strong>자료 등록</strong></button>
+          <button id="workflow-tab-1" class="workflow-tab" type="button" role="tab" aria-selected="false" aria-controls="workflow-stage" data-workflow-step="1"><span>02</span><strong>AI 사전 점검</strong></button>
+          <button id="workflow-tab-2" class="workflow-tab" type="button" role="tab" aria-selected="false" aria-controls="workflow-stage" data-workflow-step="2"><span>03</span><strong>사람의 승인</strong></button>
+          <button id="workflow-tab-3" class="workflow-tab" type="button" role="tab" aria-selected="false" aria-controls="workflow-stage" data-workflow-step="3"><span>04</span><strong>GIWA 증명</strong></button>
+          <button id="workflow-tab-4" class="workflow-tab" type="button" role="tab" aria-selected="false" aria-controls="workflow-stage" data-workflow-step="4"><span>05</span><strong>공개 검증</strong></button>
+        </div>
+        <section id="workflow-stage" class="workflow-stage" role="tabpanel" aria-labelledby="workflow-tab-0" tabindex="-1">
+          <div><p id="workflow-stage-index" class="eyebrow">Step 01 · Issuer</p><h3 id="workflow-stage-title">자료 등록: 원본은 밖에, 증빙값만 연결</h3><p id="workflow-stage-description">발행자는 원본 문서를 오프체인에 보관하고 문서 해시·버전·기준일을 등록합니다. 이 입력이 이후 모든 판단의 기준이 됩니다.</p></div>
+          <dl class="workflow-stage-facts"><div><dt>입력</dt><dd id="workflow-stage-input">문서 메타데이터 · 해시 · 버전</dd></div><div><dt>결과</dt><dd id="workflow-stage-output">점검할 공개 준비 자료</dd></div></dl>
+          <div class="workflow-actions"><button id="workflow-prev" class="secondary-button" type="button" disabled>이전 단계</button><button id="workflow-next" class="primary-button" type="button">다음: AI 사전 점검</button><button id="workflow-open" class="secondary-button" type="button">이 단계 화면 보기</button></div>
+        </section>
       </section>
 
-      <section class="control-room" aria-labelledby="control-room-title">
+      <section id="control-room" class="control-room" aria-labelledby="control-room-title">
         <div class="control-room-heading">
           <div><p class="eyebrow">Manager control room</p><h2 id="control-room-title">운영자가 한 화면에서 상황을 판단합니다.</h2></div>
           <p>AI는 제안하고, 사람은 결정하며, GIWA는 결정된 사실을 증명합니다.</p>
